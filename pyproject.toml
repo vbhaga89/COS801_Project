@@ -1,0 +1,9 @@
+[project]
+name = "cos801-project"
+version = "0.1.0"
+description = "COS 801 Crop Disease Diagnosis Project"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=3.0.5",
+]

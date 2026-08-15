@@ -1,0 +1,51 @@
+# =========================
+# Python
+# =========================
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+
+# =========================
+# uv
+# =========================
+
+# uv cache
+.uv/
+
+# =========================
+# Jupyter
+# =========================
+
+.ipynb_checkpoints/
+
+# =========================
+# ML outputs
+# =========================
+
+# Model checkpoints
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.tflite
+*.h5
+*.keras
+
+# =========================
+# OS
+# =========================
+
+.DS_Store
+Thumbs.db

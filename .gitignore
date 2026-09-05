@@ -49,3 +49,16 @@ build/
 
 .DS_Store
 Thumbs.db
+
+# =========================
+# Files
+# =========================
+
+*.jpeg
+*.jpg
+*.png
+*.tif
+*.pdf
+*.csv 
+*.xlsx
+*.docx

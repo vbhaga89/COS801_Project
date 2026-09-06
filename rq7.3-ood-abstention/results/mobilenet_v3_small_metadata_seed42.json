@@ -1,0 +1,13 @@
+{
+  "model": "mobilenet_v3_small",
+  "seed": 42,
+  "num_classes": 30,
+  "batch_size": 128,
+  "learning_rate": 0.0001,
+  "optimizer": "Adam",
+  "max_epochs": 12,
+  "patience": 3,
+  "training_time_seconds": 1560.5982711315155,
+  "test_accuracy": 0.9915929686647014,
+  "test_macro_f1": 0.9893044880039439
+}

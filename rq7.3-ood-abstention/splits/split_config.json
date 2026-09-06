@@ -1,0 +1,14 @@
+{
+  "seed": 42,
+  "ood_species": [
+    "Grape",
+    "Corn_(maize)"
+  ],
+  "n_original_images": 54305,
+  "n_original_classes": 38,
+  "n_original_species": 14,
+  "n_id_classes": 30,
+  "validation_strategy": "10% stratified split from the official PlantVillage training partition using class_name.",
+  "test_strategy": "Official PlantVillage test partition retained unchanged for known-species ID evaluation.",
+  "ood_strategy": "All Grape and Corn_(maize) images removed from ID training, validation and testing and reserved for OOD evaluation."
+}

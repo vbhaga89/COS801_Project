@@ -1,0 +1,14 @@
+{
+  "model": "efficientnet_b0",
+  "seed": 42,
+  "num_classes": 30,
+  "batch_size": 64,
+  "learning_rate": 0.0001,
+  "optimizer": "Adam",
+  "max_epochs": 12,
+  "patience": 3,
+  "training_time_seconds": 5099.690213680267,
+  "test_loss": 0.013878828313611058,
+  "test_accuracy": 0.9956327109946501,
+  "test_macro_f1": 0.994746472161063
+}

@@ -1,40 +1,29 @@
 # =========================
-# Python
+# Python and environments
 # =========================
-
-# Virtual environment
 .venv/
 venv/
 env/
-
-# Python cache
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Python packaging
 *.egg-info/
 dist/
 build/
 
 # =========================
-# uv
+# uv and Jupyter
 # =========================
-
-# uv cache
 .uv/
-
-# =========================
-# Jupyter
-# =========================
-
+.uv-cache/
+.uv-python/
 .ipynb_checkpoints/
 
 # =========================
-# ML outputs
+# Datasets and ML artifacts
 # =========================
-
-# Model checkpoints
+**/data/raw/
+**/data/external/
 *.pt
 *.pth
 *.ckpt
@@ -42,23 +31,27 @@ build/
 *.tflite
 *.h5
 *.keras
+rq7.1-model-compression/artifacts/*
+!rq7.1-model-compression/artifacts/.gitkeep
 
-# =========================
-# OS
-# =========================
-
-.DS_Store
-Thumbs.db
-
-# =========================
-# Files
-# =========================
-
+# Raw image/data files are excluded by default.
 *.jpeg
 *.jpg
 *.png
 *.tif
-*.pdf
-*.csv 
+*.tiff
+*.csv
 *.xlsx
 *.docx
+*.pdf
+
+# Curated, report-ready RQ7.1 outputs may be committed.
+!rq7.1-model-compression/results/**/*.csv
+!rq7.1-model-compression/figures/**/*.png
+
+# =========================
+# OS and editor
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/settings.json

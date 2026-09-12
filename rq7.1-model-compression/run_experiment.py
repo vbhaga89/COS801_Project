@@ -28,7 +28,7 @@ from rq71.compression import (  # noqa: E402
     static_int8_quantize,
     structured_prune,
 )
-from rq71.data import audit_splits, build_dataloaders  # noqa: E402
+from rq71.data import audit_splits, build_dataloaders, quarantine_cross_split_duplicates  # noqa: E402
 from rq71.engine import evaluate, train_distillation, train_supervised  # noqa: E402
 from rq71.models import SUPPORTED_MODELS, build_model, set_backbone_trainable  # noqa: E402
 
@@ -185,6 +185,17 @@ def append_result(config: dict[str, Any], row: dict[str, Any]) -> None:
 
 def command_eda(config: dict[str, Any]) -> None:
     report = audit_splits(config["data_dir"])
+    duplicates = report["cross_split_exact_duplicate_count"]
+    if duplicates and bool(config.get("quarantine_cross_split_duplicates", True)):
+        quarantine_dir = Path(config["output_dir"]) / "quarantined_cross_split_duplicates"
+        moved = quarantine_cross_split_duplicates(config["data_dir"], quarantine_dir)
+        save_json(Path(config["output_dir"]) / "quarantined_cross_split_duplicates.json", moved)
+        print(
+            f"Quarantined {len(moved)} duplicate image files from {duplicates} "
+            f"cross-split duplicate groups into {quarantine_dir}"
+        )
+        report = audit_splits(config["data_dir"])
+
     path = Path(config["output_dir"]) / "eda_and_leakage_audit.json"
     save_json(path, report)
     records = [

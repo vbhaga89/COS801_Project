@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import shutil
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
@@ -113,3 +114,50 @@ def audit_splits(data_dir: str | Path) -> dict[str, Any]:
         "cross_split_exact_duplicate_groups": leaked,
         "cross_split_exact_duplicate_count": len(leaked),
     }
+
+
+def quarantine_cross_split_duplicates(data_dir: str | Path, quarantine_dir: str | Path) -> list[dict[str, Any]]:
+    """Move exact duplicate images crossing splits out of the active dataset.
+
+    The train split is preferred as the kept copy, then val, then test. This is
+    intended for disposable Colab runtime copies of the dataset; the durable
+    Drive source is left unchanged.
+    """
+    root = Path(data_dir)
+    quarantine_root = Path(quarantine_dir)
+    report = audit_splits(root)
+    moved: list[dict[str, Any]] = []
+    split_priority = {"train": 0, "val": 1, "test": 2}
+
+    for duplicate_group in report["cross_split_exact_duplicate_groups"]:
+        occurrences = duplicate_group["occurrences"]
+        keep_split, keep_relative = sorted(
+            occurrences,
+            key=lambda item: (split_priority.get(item[0], 99), item[1]),
+        )[0]
+        for split, relative in occurrences:
+            if split == keep_split and relative == keep_relative:
+                continue
+            source = root / relative
+            if not source.exists():
+                continue
+            destination = quarantine_root / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            counter = 1
+            final_destination = destination
+            while final_destination.exists():
+                final_destination = destination.with_name(
+                    f"{destination.stem}.duplicate{counter}{destination.suffix}"
+                )
+                counter += 1
+            shutil.move(str(source), str(final_destination))
+            moved.append(
+                {
+                    "sha256": duplicate_group["sha256"],
+                    "kept": keep_relative,
+                    "moved": relative,
+                    "quarantine_path": str(final_destination),
+                }
+            )
+
+    return moved

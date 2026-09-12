@@ -1,5 +1,5 @@
 {
-  "data_dir": "/content/data/plantvillage",
+  "data_dir": "/content/drive/MyDrive/COS801_data/rq71_plantvillage",
   "output_dir": "/content/rq71_outputs/full",
   "image_size": 224,
   "batch_size": 64,
@@ -9,7 +9,7 @@
   "fine_tune_epochs": 5,
   "learning_rate": 0.0003,
   "weight_decay": 0.0001,
-  "seed": 42,
+  "seed": 37,
   "max_train_batches": null,
   "max_eval_batches": null,
   "pruning_ratio": 0.3,

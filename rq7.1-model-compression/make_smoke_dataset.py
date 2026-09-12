@@ -62,7 +62,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Create the deterministic RQ7.1 smoke-test dataset")
     parser.add_argument("--output", default="artifacts/smoke_data")
     parser.add_argument("--size", type=int, default=96)
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seed", type=int, default=37)
     args = parser.parse_args()
     output = Path(args.output)
     build_dataset(output, args.size, args.seed)

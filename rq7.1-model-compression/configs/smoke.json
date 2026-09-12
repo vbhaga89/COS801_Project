@@ -9,7 +9,7 @@
   "fine_tune_epochs": 1,
   "learning_rate": 0.001,
   "weight_decay": 0.0001,
-  "seed": 42,
+  "seed": 37,
   "max_train_batches": 5,
   "max_eval_batches": null,
   "pruning_ratio": 0.2,

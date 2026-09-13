@@ -2,7 +2,7 @@
 
 **Research question:** How much predictive performance is lost when an image classifier is compressed by post-training quantisation, structured channel pruning, and knowledge distillation to meet a mobile inference budget?
 
-This folder provides a reproducible, Colab-first experiment pipeline. It deliberately keeps all work local until the team reviews the results and chooses what to commit.
+This folder provides a reproducible, Colab-first experiment pipeline.
 
 ## Experimental protocol
 
@@ -26,8 +26,6 @@ The required comparisons are:
 
 Each baseline first trains only its linear classification head on frozen ImageNet features, satisfying the course baseline requirement, and then uses a documented fine-tuning stage. The default 25 MB, 100 ms, and 3 percentage-point loss limits in the configuration files are provisional mobile budgets; replace them only after the team records an agreed target device and budget.
 
-The default seed is `37`. Seed `42` is a common programming convention rather than a scientifically special value; using `37` is equally valid as long as it is fixed and reported. Do not compare variants trained with different splits, augmentations, epoch budgets, or seeds without labelling that comparison as an ablation.
-
 ## Data layout
 
 Smoke runs use a tiny synthetic three-class dataset only to confirm that the pipeline executes. Final runs require the original, unaugmented, RGB/color PlantVillage data prepared into explicit split directories:
@@ -38,9 +36,6 @@ COS801_data/rq71_plantvillage/
 ├── val/<class-name>/*.jpg
 └── test/<class-name>/*.jpg
 ```
-
-Use all 38 PlantVillage classes. Do not use a tomato-only subset, grayscale data, segmented leaves, or a pre-augmented dataset folder. Augmentation belongs inside the training transform and is applied only to training images.
-
 The `eda` command checks class counts and exact duplicate hashes across splits. A run stops when cross-split duplicates are found. Near-duplicate or source-group checks should also be performed when source metadata is available.
 
 To prepare the recommended Hugging Face PlantVillage RGB/color release into the expected layout:
@@ -67,10 +62,6 @@ python run_experiment.py distill --config configs/smoke.json --checkpoint result
 ```
 
 Replace `configs/smoke.json` with `configs/full.json` for reportable experiments.
-
-## VS Code CPU smoke workflow
-
-The repository includes `.vscode/tasks.json`. In VS Code, choose **Terminal → Run Task → RQ7.1: Run complete local smoke pipeline**. This creates a deterministic three-class synthetic image dataset, runs the leakage gate, trains both baselines, and exercises all three compression paths. The data and outputs remain under `artifacts/` and are ignored by Git. Synthetic smoke outputs prove only that the software pipeline executes; they are never valid evidence for RQ7.1.
 
 ## Output policy
 

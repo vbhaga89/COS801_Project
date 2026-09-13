@@ -11,8 +11,8 @@ CLASSES = ("healthy", "leaf_spot", "blight")
 COUNTS = {"train": 24, "val": 9, "test": 9}
 
 
-def make_image(label: str, index: int, size: int, seed: int) -> Image.Image:
-    rng = random.Random(f"{seed}:{label}:{index}")
+def make_image(label: str, split: str, index: int, size: int, seed: int) -> Image.Image:
+    rng = random.Random(f"{seed}:{split}:{label}:{index}")
     image = Image.new("RGB", (size, size), (224, 220, 190))
     draw = ImageDraw.Draw(image)
     margin = size // 8
@@ -50,7 +50,7 @@ def build_dataset(output: Path, size: int, seed: int) -> None:
             class_dir.mkdir(parents=True, exist_ok=True)
             for index in range(count):
                 path = class_dir / f"{label}_{split}_{index:03d}.png"
-                make_image(label, index, size, seed).save(path)
+                make_image(label, split, index, size, seed).save(path)
     marker = output / "SYNTHETIC_SMOKE_DATA_ONLY.txt"
     marker.write_text(
         "Synthetic images for pipeline validation only. Never use these data as research results.\n",
@@ -62,7 +62,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Create the deterministic RQ7.1 smoke-test dataset")
     parser.add_argument("--output", default="artifacts/smoke_data")
     parser.add_argument("--size", type=int, default=96)
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seed", type=int, default=37)
     args = parser.parse_args()
     output = Path(args.output)
     build_dataset(output, args.size, args.seed)

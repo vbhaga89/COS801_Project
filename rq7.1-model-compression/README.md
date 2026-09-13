@@ -6,7 +6,7 @@ This folder provides a reproducible, Colab-first experiment pipeline. It deliber
 
 ## Experimental protocol
 
-Use one leakage-audited train/validation/test split for every model variant. The final comparison must report:
+Use one leakage-audited train/validation/test split for every model variant. For the reportable RQ7.1 experiment, the intended task is the original RGB/color PlantVillage classification problem with all 38 crop-disease classes. The final comparison must report:
 
 - accuracy and macro F1 on the same held-out test set;
 - change in accuracy and macro F1 relative to the matching FP32 teacher;
@@ -26,24 +26,35 @@ The required comparisons are:
 
 Each baseline first trains only its linear classification head on frozen ImageNet features, satisfying the course baseline requirement, and then uses a documented fine-tuning stage. The default 25 MB, 100 ms, and 3 percentage-point loss limits in the configuration files are provisional mobile budgets; replace them only after the team records an agreed target device and budget.
 
-Do not compare variants trained with different splits, augmentations, epoch budgets, or seeds without labelling that comparison as an ablation.
+The default seed is `37`. Seed `42` is a common programming convention rather than a scientifically special value; using `37` is equally valid as long as it is fixed and reported. Do not compare variants trained with different splits, augmentations, epoch budgets, or seeds without labelling that comparison as an ablation.
 
 ## Data layout
 
-Final runs require explicit split directories:
+Smoke runs use a tiny synthetic three-class dataset only to confirm that the pipeline executes. Final runs require the original, unaugmented, RGB/color PlantVillage data prepared into explicit split directories:
 
 ```text
-data/plantvillage/
+COS801_data/rq71_plantvillage/
 ├── train/<class-name>/*.jpg
 ├── val/<class-name>/*.jpg
 └── test/<class-name>/*.jpg
 ```
 
+Use all 38 PlantVillage classes. Do not use a tomato-only subset, grayscale data, segmented leaves, or a pre-augmented dataset folder. Augmentation belongs inside the training transform and is applied only to training images.
+
 The `eda` command checks class counts and exact duplicate hashes across splits. A run stops when cross-split duplicates are found. Near-duplicate or source-group checks should also be performed when source metadata is available.
+
+To prepare the recommended Hugging Face PlantVillage RGB/color release into the expected layout:
+
+```bash
+pip install datasets scikit-learn
+python prepare_plantvillage.py --output /content/drive/MyDrive/COS801_data/rq71_plantvillage
+```
+
+The helper expects 38 classes. It uses the dataset's existing train/test split and attempts to create a validation split from the training portion with leaf/source grouping metadata when available. If no grouping column is exposed, it fails safely; rerun with `--allow-image-level-val-split` only if you intentionally accept and document that limitation.
 
 ## Colab workflow
 
-Open `notebooks/rq7_1_colab.ipynb`, set `PROJECT_ROOT`, `DATA_DIR`, and `OUTPUT_DIR`, then run the cells in order. `SMOKE_MODE=True` uses a deliberately small budget to verify that the complete pipeline works; it is not a reportable experiment.
+Open `notebooks/rq7_1_colab.ipynb` from Google Drive and run the cells in order. `SMOKE_MODE=True` uses a deliberately small budget to verify that the complete pipeline works; it is not a reportable experiment. To run actual PlantVillage data, first prepare `COS801_data/rq71_plantvillage`, then set `SMOKE_MODE=False` in the notebook.
 
 Equivalent command-line examples from this directory:
 

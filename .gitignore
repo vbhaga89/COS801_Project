@@ -62,3 +62,9 @@ Thumbs.db
 *.csv 
 *.xlsx
 *.docx
+
+# =========================
+# Folders
+# =========================
+
+/rq7.3-ood-abstention/data/nonplant

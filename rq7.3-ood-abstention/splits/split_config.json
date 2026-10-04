@@ -10,5 +10,18 @@
   "n_id_classes": 30,
   "validation_strategy": "10% stratified split from the official PlantVillage training partition using class_name.",
   "test_strategy": "Official PlantVillage test partition retained unchanged for known-species ID evaluation.",
-  "ood_strategy": "All Grape and Corn_(maize) images removed from ID training, validation and testing and reserved for OOD evaluation."
+  "ood_strategy": "All Grape and Corn_(maize) images removed from ID training, validation and testing and reserved for OOD evaluation.",
+  "nonplant_ood": {
+    "dataset": "Caltech-101",
+    "categories": [
+      "airplanes",
+      "Motorbikes",
+      "Faces",
+      "Leopards",
+      "watch",
+      "chandelier"
+    ],
+    "max_images_per_category": 100,
+    "seed": 42
+  }
 }

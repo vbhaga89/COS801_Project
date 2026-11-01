@@ -14,26 +14,21 @@ independently; there is no single best-backbone selection step.
 
 ## Structure
 
-`src/rq71/`: reusable models, loading, training, compression and selection.
+`src/rq71/`: reusable models, loading, training, compression, and selection.
 `configs/`: budgets. `splits/`: immutable manifests/class mapping/hash protocol.
 `tests/`: regression tests. `results/`: curated small evidence and external run
-locations. `figures/`: curated report plots. Large weights/datasets are not Git
-source. Do not modify RQ7.2, RQ7.3 or the shared root environment without review.
-
+locations. `figures/`: curated report plots.
 ## Numbered notebooks
 
 1. `notebooks/01_dataset_setup_eda.ipynb`: environment/data preflight and EDA.
 2. `notebooks/02_train_baselines.ipynb`: tuned linear probes and both baselines.
 3. `notebooks/03_compression.ipynb`: independent compression tracks.
 4. `notebooks/04_final_evaluation.ipynb`: selected-model prediction analysis,
-   figures and three-seed aggregation.
+   figures, and three-seed aggregation.
 
 Set PROJECT, DATA and RESULTS explicitly. Save notebook 02's exact RUN path for
 03/04. Execution is disabled by default. Stages use `run_stage.py`, preserve
-config hashes, check prerequisites and reject silent reruns. Failed/attempted
-stages require evidence review and a fresh run, not unverified automatic resume.
-Older unnumbered notebooks/configs remain historical references, not the release
-entrypoint. Do not execute their older seed schedules.
+config hashes, check prerequisites, and reject silent reruns. 
 
 ## Environment and checks
 
@@ -52,7 +47,7 @@ python run_three_seeds.py --data-dir DATA --manifest-dir splits --output-root RE
 ```
 
 The final command only checks data; add `--execute` deliberately to launch.
-The default runs all three seeds sequentially. For bounded sessions use
+The default runs all three seeds sequentially. For bounded sessions, use
 `--seeds 14 27`, then `--seeds 42`, and aggregate the explicit three seed folders.
 No automatic batch-size reduction or official CPU fallback.
 
@@ -65,8 +60,7 @@ Exact-hash checks do not prove leaf-group or near-duplicate independence.
 
 Each timestamped run preserves config, logs, models, selection evidence,
 predictions and figures. Only admitted final-table artifacts receive prediction
-analysis. Temperature is selected on validation NLL. Reliability and ID
-risk–coverage analysis are distinct from RQ7.3's OOD task.
+analysis. Temperature is selected on validation NLL.
 
 INT8/pruning accuracy-gate rejection is recorded as **partial**, with no fabricated
 eligible test row. Other exceptions are fatal. Summaries check configuration and
@@ -79,16 +73,8 @@ The three-seed staged synthetic Kaggle smoke completed, including prediction
 analysis and aggregation. Separate real-image hash/decode and GPU startup tests
 passed. The bounded real batch64 check logged successful updates/validation
 forward passes for both architectures; final run/artifact audit remains required.
-None of these are reportable real-data training results or a guarantee that a
-full session cannot fail.
+
 
 Full-data release-candidate run submitted on Kaggle (version `364659822`):
 https://www.kaggle.com/code/makungundlovu/rq71-full-data-release-run?scriptVersionId=364659822
-It schedules seeds 14/27; seed 42 remains a subsequent run. Its source inventory
-records the pre-commit snapshot. Completion and scientific results are pending.
 
-Pending before final submission: complete GPU environment capture,
-official full-data rerun audit, artifact backup/audit,
-licence verification and report integration. Do not pool prospective results with
-historical runs without protocol reconciliation. No commit/push is implied by
-this candidate's preparation; publication is a separate explicit action.

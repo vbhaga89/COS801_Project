@@ -7,8 +7,26 @@ from pathlib import Path
 from typing import Any
 
 import torch
-from torch.utils.data import DataLoader
-from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, Dataset
+from torchvision import transforms
+from torchvision.datasets.folder import default_loader
+from .manifests import prepare_manifests, read_manifest
+
+
+class ManifestDataset(Dataset):
+    def __init__(self, root, manifest_dir, split, transform):
+        self.samples, self.class_to_idx = read_manifest(root, manifest_dir, split)
+        self.classes = sorted(self.class_to_idx, key=self.class_to_idx.get)
+        self.targets = [label for _, label in self.samples]
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, index):
+        path, label = self.samples[index]
+        image = default_loader(path)
+        return self.transform(image), label
 
 
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
@@ -58,10 +76,13 @@ def build_dataloaders(config: dict[str, Any]) -> tuple[dict[str, DataLoader], li
         )
 
     train_transform, eval_transform = build_transforms(int(config["image_size"]))
+    manifest_dir = Path(config.get("manifest_dir") or Path(config["output_dir"]) / "splits")
+    if not (manifest_dir / 'split_protocol.json').exists():
+        prepare_manifests(root, manifest_dir)
     datasets_by_split = {
-        "train": datasets.ImageFolder(required["train"], transform=train_transform),
-        "val": datasets.ImageFolder(required["val"], transform=eval_transform),
-        "test": datasets.ImageFolder(required["test"], transform=eval_transform),
+        split: ManifestDataset(root, manifest_dir, split,
+            train_transform if split == 'train' else eval_transform)
+        for split in ('train', 'val', 'test')
     }
     class_names = datasets_by_split["train"].classes
     for split, dataset in datasets_by_split.items():
@@ -84,7 +105,7 @@ def build_dataloaders(config: dict[str, Any]) -> tuple[dict[str, DataLoader], li
     return loaders, class_names
 
 
-def audit_splits(data_dir: str | Path) -> dict[str, Any]:
+def audit_splits(data_dir: str | Path, manifest_dir: str | Path | None = None) -> dict[str, Any]:
     root = Path(data_dir)
     split_counts: dict[str, Counter[str]] = {}
     hashes: dict[str, list[tuple[str, str]]] = defaultdict(list)
@@ -94,7 +115,12 @@ def audit_splits(data_dir: str | Path) -> dict[str, Any]:
         if not split_root.is_dir():
             raise FileNotFoundError(f"Missing split directory: {split_root}")
         counts: Counter[str] = Counter()
-        for path in sorted(split_root.rglob("*")):
+        if manifest_dir:
+            samples, _ = read_manifest(root, manifest_dir, split)
+            paths = (Path(path) for path, _ in samples)
+        else:
+            paths = sorted(split_root.rglob("*"))
+        for path in paths:
             if not path.is_file() or path.suffix.lower() not in IMAGE_SUFFIXES:
                 continue
             label = path.relative_to(split_root).parts[0]

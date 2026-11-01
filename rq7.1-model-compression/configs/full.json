@@ -9,7 +9,9 @@
   "fine_tune_epochs": 5,
   "learning_rate": 0.0003,
   "weight_decay": 0.0001,
-  "seed": 37,
+  "seed": 14,
+  "probe_epochs": 10,
+  "probe_learning_rates": [0.001, 0.01, 0.1],
   "max_train_batches": null,
   "max_eval_batches": null,
   "pruning_ratio": 0.3,
@@ -21,5 +23,12 @@
   "cpu_threads": 1,
   "max_accuracy_drop": 0.03,
   "max_model_size_mb": 25.0,
-  "max_median_latency_ms": 100.0
+  "max_median_latency_ms": 100.0,
+  "max_fp32_onnx_accuracy_gap": 0.002,
+  "max_int8_sanity_accuracy_drop": 0.1,
+  "pruning_ratios": [
+    0.1,
+    0.2,
+    0.3
+  ]
 }

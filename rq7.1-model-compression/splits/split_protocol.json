@@ -1,0 +1,18 @@
+{
+  "strategy": "preserve existing audited directory partitions",
+  "counts": {
+    "train": 38146,
+    "val": 5449,
+    "test": 10704
+  },
+  "classes": 38,
+  "split_seed": null,
+  "leaf_group_status": "unavailable; not inferred from filenames",
+  "limitations": "Exact hash checks do not establish leaf-group or near-duplicate independence.",
+  "files_sha256": {
+    "class_to_idx.json": "64aba7e3f9943747b4270074c2689332a7e87e04dba0675ecc3848e59b2da84f",
+    "train.csv": "3c5d1b28d4683bdec475361f5cc1a2ef9ddf43166e8801e80245ad06e5b873b1",
+    "val.csv": "a7d97d4819896130aadac9b41e71606ec7b31408edc3e1a49a1354030e469a00",
+    "test.csv": "c583faae834f50cd10eb51ac6fdcc37bba966d564819ad817fc4b40faf0d00d0"
+  }
+}

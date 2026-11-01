@@ -1,0 +1,3 @@
+# Manifest fingerprints are byte-based. Never rewrite them on checkout.
+splits/*.csv -text
+splits/*.json -text

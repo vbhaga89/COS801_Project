@@ -35,3 +35,31 @@ def set_backbone_trainable(model: nn.Module, trainable: bool) -> None:
         parameter.requires_grad = trainable
     for parameter in model.classifier.parameters():
         parameter.requires_grad = True
+
+
+class FrozenLinearProbe(nn.Module):
+    """Fixed ImageNet features with one trainable linear classifier."""
+    def __init__(self, backbone: nn.Module, feature_dim: int, classes: int):
+        super().__init__()
+        self.backbone = backbone
+        self.backbone.requires_grad_(False)
+        self.head = nn.Linear(feature_dim, classes)
+
+    def train(self, mode: bool = True):
+        super().train(mode)
+        self.backbone.eval()  # Freeze BN buffers and dropout, not only gradients.
+        return self
+
+    def forward(self, images):
+        import torch
+        with torch.no_grad():
+            features = self.backbone(images)
+        return self.head(features)
+
+
+def build_linear_probe(name: str, classes: int, pretrained: bool = True):
+    backbone = build_model(name, classes, pretrained)
+    # Use pooled convolutional features, not MobileNet's nonlinear classifier.
+    feature_dim = backbone.classifier[0].in_features if name.startswith('mobilenet') else backbone.classifier[-1].in_features
+    backbone.classifier = nn.Identity()
+    return FrozenLinearProbe(backbone, feature_dim, classes)

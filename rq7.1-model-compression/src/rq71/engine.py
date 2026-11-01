@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import time
 from collections.abc import Iterable
 from typing import Any
 
@@ -58,6 +59,8 @@ def train_supervised(
     max_train_batches: int | None = None,
     max_eval_batches: int | None = None,
 ) -> tuple[nn.Module, list[dict[str, float]]]:
+    if epochs < 1:
+        raise ValueError('Training requires at least one epoch')
     model.to(device)
     optimizer = torch.optim.AdamW(
         (parameter for parameter in model.parameters() if parameter.requires_grad),
@@ -70,15 +73,37 @@ def train_supervised(
     history: list[dict[str, float]] = []
 
     for epoch in range(1, epochs + 1):
+        epoch_started = time.monotonic()
+        print(f"[supervised] epoch {epoch}/{epochs} started on {device}", flush=True)
         model.train()
-        for images, targets in _limited(train_loader, max_train_batches):
+        train_loss_sum = 0.0
+        train_examples = 0
+        train_labels, train_predictions = [], []
+        for batch_index, (images, targets) in enumerate(_limited(train_loader, max_train_batches), 1):
             images, targets = images.to(device), targets.to(device)
             optimizer.zero_grad(set_to_none=True)
-            loss = criterion(model(images), targets)
+            logits = model(images)
+            loss = criterion(logits, targets)
+            train_labels.extend(targets.detach().cpu().tolist())
+            train_predictions.extend(logits.detach().argmax(1).cpu().tolist())
             loss.backward()
             optimizer.step()
+            train_loss_sum += float(loss.item()) * targets.numel()
+            train_examples += targets.numel()
+            if batch_index == 1 or batch_index % 100 == 0:
+                print(f"[supervised] epoch={epoch} batch={batch_index} examples={train_examples} elapsed_s={time.monotonic()-epoch_started:.1f}", flush=True)
+        if not train_examples:
+            raise RuntimeError('Training loader produced no examples')
         metrics = evaluate(model, val_loader, device, max_eval_batches)
-        history.append({"epoch": float(epoch), **metrics})
+        print(f"[supervised] epoch={epoch} train_loss={train_loss_sum/max(1, train_examples):.4f} val={metrics} elapsed_s={time.monotonic()-epoch_started:.1f}", flush=True)
+        history.append({
+            "epoch": float(epoch),
+            "train_loss": train_loss_sum / max(1, train_examples),
+            "train_accuracy": float(accuracy_score(train_labels, train_predictions)),
+            "train_macro_f1": float(f1_score(train_labels, train_predictions, average='macro', zero_division=0)),
+            "epoch_seconds": time.monotonic() - epoch_started,
+            **metrics,
+        })
         if metrics["macro_f1"] > best_f1:
             best_f1 = metrics["macro_f1"]
             best_state = {key: value.detach().cpu().clone() for key, value in model.state_dict().items()}
@@ -102,6 +127,8 @@ def train_distillation(
     max_train_batches: int | None = None,
     max_eval_batches: int | None = None,
 ) -> tuple[nn.Module, list[dict[str, float]]]:
+    if epochs < 1 or temperature <= 0 or not 0 <= alpha <= 1:
+        raise ValueError('Invalid distillation epoch/temperature/alpha budget')
     teacher.to(device).eval()
     student.to(device)
     for parameter in teacher.parameters():
@@ -112,12 +139,19 @@ def train_distillation(
     best_f1 = -math.inf
 
     for epoch in range(1, epochs + 1):
+        epoch_started = time.monotonic()
+        print(f"[distillation] epoch {epoch}/{epochs} started on {device}", flush=True)
         student.train()
-        for images, targets in _limited(train_loader, max_train_batches):
+        train_loss_sum = 0.0
+        train_examples = 0
+        train_labels, train_predictions = [], []
+        for batch_index, (images, targets) in enumerate(_limited(train_loader, max_train_batches), 1):
             images, targets = images.to(device), targets.to(device)
             with torch.inference_mode():
                 teacher_logits = teacher(images)
             student_logits = student(images)
+            train_labels.extend(targets.detach().cpu().tolist())
+            train_predictions.extend(student_logits.detach().argmax(1).cpu().tolist())
             hard_loss = F.cross_entropy(student_logits, targets)
             soft_loss = F.kl_div(
                 F.log_softmax(student_logits / temperature, dim=1),
@@ -128,8 +162,22 @@ def train_distillation(
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             optimizer.step()
+            train_loss_sum += float(loss.item()) * targets.numel()
+            train_examples += targets.numel()
+            if batch_index == 1 or batch_index % 100 == 0:
+                print(f"[distillation] epoch={epoch} batch={batch_index} examples={train_examples} elapsed_s={time.monotonic()-epoch_started:.1f}", flush=True)
+        if not train_examples:
+            raise RuntimeError('Distillation loader produced no examples')
         metrics = evaluate(student, val_loader, device, max_eval_batches)
-        history.append({"epoch": float(epoch), **metrics})
+        print(f"[distillation] epoch={epoch} train_loss={train_loss_sum/max(1, train_examples):.4f} val={metrics} elapsed_s={time.monotonic()-epoch_started:.1f}", flush=True)
+        history.append({
+            "epoch": float(epoch),
+            "train_loss": train_loss_sum / max(1, train_examples),
+            "train_accuracy": float(accuracy_score(train_labels, train_predictions)),
+            "train_macro_f1": float(f1_score(train_labels, train_predictions, average='macro', zero_division=0)),
+            "epoch_seconds": time.monotonic() - epoch_started,
+            **metrics,
+        })
         if metrics["macro_f1"] > best_f1:
             best_f1 = metrics["macro_f1"]
             best_state = {key: value.detach().cpu().clone() for key, value in student.state_dict().items()}

@@ -1,84 +1,94 @@
 # RQ7.1 — Lightweight model compression
 
-**Research question:** How much predictive performance is lost when an image classifier is compressed by post-training quantisation, structured channel pruning, and knowledge distillation to meet a mobile inference budget?
+Release candidate on `feature/rq7.1-model-compression`. Compare both architectures
+independently; there is no single best-backbone selection step.
 
-This folder provides a reproducible, Colab-first experiment pipeline. It deliberately keeps all work local until the team reviews the results and chooses what to commit.
+## Fixed protocol
 
-## Experimental protocol
+- Seeds **14, 27, 42**; one audited 38-class RGB PlantVillage split.
+- Training batch size **64**; baseline **20 epochs** (3 head + 17 fine-tuning).
+- Pruning recovery: **5 epochs** per ratio 0.1/0.2/0.3.
+- CE/KD students: **20 epochs**, fixed alpha 0.5 and temperature 4.
+- Separate frozen-feature linear probes: 3 learning-rate trials, 10 epochs each.
+- Validation selects checkpoints/hyperparameters; test data do not tune them.
 
-Use one leakage-audited train/validation/test split for every model variant. For the reportable RQ7.1 experiment, the intended task is the original RGB/color PlantVillage classification problem with all 38 crop-disease classes. The final comparison must report:
+## Structure
 
-- accuracy and macro F1 on the same held-out test set;
-- change in accuracy and macro F1 relative to the matching FP32 teacher;
-- parameter count and artifact size in MB;
-- median and p95 latency at batch size 1 on a CPU-only runtime;
-- compression ratio and whether the mobile budget was met.
+`src/rq71/`: reusable models, loading, training, compression and selection.
+`configs/`: budgets. `splits/`: immutable manifests/class mapping/hash protocol.
+`tests/`: regression tests. `results/`: curated small evidence and external run
+locations. `figures/`: curated report plots. Large weights/datasets are not Git
+source. Do not modify RQ7.2, RQ7.3 or the shared root environment without review.
 
-The required comparisons are:
+## Numbered notebooks
 
-| ID | Model | Compression |
-|---|---|---|
-| B1 | EfficientNet-B0 | None, FP32 baseline |
-| B2 | MobileNetV3-Small | None, FP32 baseline |
-| Q1 | Best baseline | Static INT8 ONNX quantisation |
-| P1 | Best baseline | Dependency-aware structured channel pruning + fine-tuning |
-| D1 | Best baseline teacher | Knowledge distillation into MobileNetV3-Small 0.5× student |
+1. `notebooks/01_dataset_setup_eda.ipynb`: environment/data preflight and EDA.
+2. `notebooks/02_train_baselines.ipynb`: tuned linear probes and both baselines.
+3. `notebooks/03_compression.ipynb`: independent compression tracks.
+4. `notebooks/04_final_evaluation.ipynb`: selected-model prediction analysis,
+   figures and three-seed aggregation.
 
-Each baseline first trains only its linear classification head on frozen ImageNet features, satisfying the course baseline requirement, and then uses a documented fine-tuning stage. The default 25 MB, 100 ms, and 3 percentage-point loss limits in the configuration files are provisional mobile budgets; replace them only after the team records an agreed target device and budget.
+Set PROJECT, DATA and RESULTS explicitly. Save notebook 02's exact RUN path for
+03/04. Execution is disabled by default. Stages use `run_stage.py`, preserve
+config hashes, check prerequisites and reject silent reruns. Failed/attempted
+stages require evidence review and a fresh run, not unverified automatic resume.
+Older unnumbered notebooks/configs remain historical references, not the release
+entrypoint. Do not execute their older seed schedules.
 
-The default seed is `37`. Seed `42` is a common programming convention rather than a scientifically special value; using `37` is equally valid as long as it is fixed and reported. Do not compare variants trained with different splits, augmentations, epoch budgets, or seeds without labelling that comparison as an ablation.
+## Environment and checks
 
-## Data layout
+Read [ENVIRONMENT.md](ENVIRONMENT.md). The shared root uv.lock is not asserted to
+reproduce the tested Kaggle runtime. Preserve its compatible GPU torch/torchvision
+pair; use this folder's scoped requirements. The direct pins are not a complete
+transitive lock.
 
-Smoke runs use a tiny synthetic three-class dataset only to confirm that the pipeline executes. Final runs require the original, unaugmented, RGB/color PlantVillage data prepared into explicit split directories:
-
-```text
-COS801_data/rq71_plantvillage/
-├── train/<class-name>/*.jpg
-├── val/<class-name>/*.jpg
-└── test/<class-name>/*.jpg
-```
-
-Use all 38 PlantVillage classes. Do not use a tomato-only subset, grayscale data, segmented leaves, or a pre-augmented dataset folder. Augmentation belongs inside the training transform and is applied only to training images.
-
-The `eda` command checks class counts and exact duplicate hashes across splits. A run stops when cross-split duplicates are found. Near-duplicate or source-group checks should also be performed when source metadata is available.
-
-To prepare the recommended Hugging Face PlantVillage RGB/color release into the expected layout:
-
-```bash
-pip install datasets scikit-learn
-python prepare_plantvillage.py --output /content/drive/MyDrive/COS801_data/rq71_plantvillage
-```
-
-The helper expects 38 classes. It uses the dataset's existing train/test split and attempts to create a validation split from the training portion with leaf/source grouping metadata when available. If no grouping column is exposed, it fails safely; rerun with `--allow-image-level-val-split` only if you intentionally accept and document that limitation.
-
-## Colab workflow
-
-Open `notebooks/rq7_1_colab.ipynb` from Google Drive and run the cells in order. `SMOKE_MODE=True` uses a deliberately small budget to verify that the complete pipeline works; it is not a reportable experiment. To run actual PlantVillage data, first prepare `COS801_data/rq71_plantvillage`, then set `SMOKE_MODE=False` in the notebook.
-
-Equivalent command-line examples from this directory:
+Run from this directory:
 
 ```bash
-python run_experiment.py eda --config configs/smoke.json
-python run_experiment.py train --config configs/smoke.json --model mobilenet_v3_small
-python run_experiment.py quantize --config configs/smoke.json --checkpoint results/mobilenet_v3_small/baseline.pt
-python run_experiment.py prune --config configs/smoke.json --checkpoint results/mobilenet_v3_small/baseline.pt
-python run_experiment.py distill --config configs/smoke.json --checkpoint results/mobilenet_v3_small/baseline.pt
+python check_release.py
+python -m unittest discover -s tests -p 'test_*.py'
+python check_environment.py --require-cuda --output environment.json
+python run_three_seeds.py --data-dir DATA --manifest-dir splits --output-root RESULTS
 ```
 
-Replace `configs/smoke.json` with `configs/full.json` for reportable experiments.
+The final command only checks data; add `--execute` deliberately to launch.
+The default runs all three seeds sequentially. For bounded sessions use
+`--seeds 14 27`, then `--seeds 42`, and aggregate the explicit three seed folders.
+No automatic batch-size reduction or official CPU fallback.
 
-## VS Code CPU smoke workflow
+## Data and outputs
 
-The repository includes `.vscode/tasks.json`. In VS Code, choose **Terminal → Run Task → RQ7.1: Run complete local smoke pipeline**. This creates a deterministic three-class synthetic image dataset, runs the leakage gate, trains both baselines, and exercises all three compression paths. The data and outputs remain under `artifacts/` and are ignored by Git. Synthetic smoke outputs prove only that the software pipeline executes; they are never valid evidence for RQ7.1.
+Train/validation/test counts are **38,146 / 5,449 / 10,704**. Stage images on
+runtime-local storage and load only manifest records. Extra physical duplicate
+files do not re-enter the split. Never regenerate a random split for each seed.
+Exact-hash checks do not prove leaf-group or near-duplicate independence.
 
-## Output policy
+Each timestamped run preserves config, logs, models, selection evidence,
+predictions and figures. Only admitted final-table artifacts receive prediction
+analysis. Temperature is selected on validation NLL. Reliability and ID
+risk–coverage analysis are distinct from RQ7.3's OOD task.
 
-- `results/metrics.csv` is the canonical comparison table and should be committed.
-- `figures/` contains report-ready plots and should be committed.
-- `artifacts/` contains checkpoints and ONNX files and remains ignored because these files are large.
-- Every result row records the configuration, seed, model, compression method, software versions, and timestamp.
+INT8/pruning accuracy-gate rejection is recorded as **partial**, with no fabricated
+eligible test row. Other exceptions are fatal. Summaries check configuration and
+split-hash equality and report sample SD and contributing n. Hardware/environment
+comparability still needs review. Cloud CPU latency is not target-device proof.
 
-## Interpretation
+## Verification and release status
 
-RQ7.1 is answered by the Pareto trade-off, not by accuracy alone. The preferred model is the smallest and fastest variant that remains inside the agreed accuracy-loss and latency budgets. Negative results—such as pruning that reduces parameters but not latency—must be retained and explained.
+The three-seed staged synthetic Kaggle smoke completed, including prediction
+analysis and aggregation. Separate real-image hash/decode and GPU startup tests
+passed. The bounded real batch64 check logged successful updates/validation
+forward passes for both architectures; final run/artifact audit remains required.
+None of these are reportable real-data training results or a guarantee that a
+full session cannot fail.
+
+Full-data release-candidate run submitted on Kaggle (version `364659822`):
+https://www.kaggle.com/code/makungundlovu/rq71-full-data-release-run?scriptVersionId=364659822
+It schedules seeds 14/27; seed 42 remains a subsequent run. Its source inventory
+records the pre-commit snapshot. Completion and scientific results are pending.
+
+Pending before final submission: complete GPU environment capture,
+official full-data rerun audit, artifact backup/audit,
+licence verification and report integration. Do not pool prospective results with
+historical runs without protocol reconciliation. No commit/push is implied by
+this candidate's preparation; publication is a separate explicit action.

@@ -10,7 +10,8 @@ import onnxruntime as ort
 import torch
 import torch.nn as nn
 import torch_pruning as tp
-from onnxruntime.quantization import CalibrationDataReader, QuantFormat, QuantType, quantize_static
+from onnxruntime.quantization import CalibrationDataReader, CalibrationMethod, QuantFormat, QuantType, quantize_static
+from onnxruntime.quantization.shape_inference import quant_pre_process
 from sklearn.metrics import accuracy_score, f1_score
 
 
@@ -57,8 +58,13 @@ def export_onnx(model: nn.Module, output_path: str | Path, image_size: int) -> P
 
 class LoaderCalibrationReader(CalibrationDataReader):
     def __init__(self, loader: Any, batches: int):
-        self._iterator = iter(loader)
-        self._remaining = batches
+        self._loader = loader
+        self._batches = batches
+        self.rewind()
+
+    def rewind(self) -> None:
+        self._iterator = iter(self._loader)
+        self._remaining = self._batches
 
     def get_next(self) -> dict[str, np.ndarray] | None:
         if self._remaining <= 0:
@@ -68,7 +74,16 @@ class LoaderCalibrationReader(CalibrationDataReader):
         except StopIteration:
             return None
         self._remaining -= 1
-        return {"input": images.cpu().numpy().astype(np.float32)}
+        values = images.cpu().numpy().astype(np.float32)
+        if values.ndim != 4 or values.shape[1] != 3 or not np.isfinite(values).all():
+            raise ValueError("Calibration requires finite NCHW RGB tensors")
+        if self._remaining == self._batches - 1 or self._remaining % 10 == 0:
+            print(
+                f"Calibration batch {self._batches - self._remaining}/{self._batches}: "
+                f"shape={values.shape}, range=[{values.min():.5f}, {values.max():.5f}]",
+                flush=True,
+            )
+        return {"input": values}
 
 
 def static_int8_quantize(
@@ -76,18 +91,68 @@ def static_int8_quantize(
     int8_path: str | Path,
     calibration_loader: Any,
     calibration_batches: int,
+    calibration_method: str = "minmax",
+    per_channel: bool = True,
+    activation_type: str = "quint8",
+    op_types_to_quantize: list[str] | None = None,
+    prepared_validator: Any = None,
+    nodes_to_exclude: list[str] | None = None,
 ) -> Path:
+    source = Path(fp32_path)
     output = Path(int8_path)
     output.parent.mkdir(parents=True, exist_ok=True)
-    quantize_static(
-        model_input=str(fp32_path),
-        model_output=str(output),
-        calibration_data_reader=LoaderCalibrationReader(calibration_loader, calibration_batches),
-        quant_format=QuantFormat.QDQ,
-        activation_type=QuantType.QUInt8,
-        weight_type=QuantType.QInt8,
-        per_channel=True,
+    prepared = output.with_name(output.stem + "_prepared.onnx")
+
+    method_key = calibration_method.strip().lower()
+    methods = {
+        "minmax": CalibrationMethod.MinMax,
+        "entropy": CalibrationMethod.Entropy,
+        "percentile": CalibrationMethod.Percentile,
+    }
+    if method_key not in methods:
+        raise ValueError(
+            f"Unsupported calibration method {calibration_method!r}; "
+            f"choose from {sorted(methods)}"
+        )
+    activation_key = activation_type.strip().lower()
+    activation_types = {"quint8": QuantType.QUInt8, "qint8": QuantType.QInt8}
+    if activation_key not in activation_types:
+        raise ValueError(
+            f"Unsupported activation type {activation_type!r}; choose from {sorted(activation_types)}"
+        )
+
+    quant_pre_process(
+        str(source),
+        str(prepared),
+        skip_symbolic_shape=False,
+        skip_onnx_shape=False,
+        skip_optimization=False,
     )
+    try:
+        if prepared_validator is not None:
+            prepared_validator(prepared)
+        print(f"Starting INT8 calibration: {output.name}", flush=True)
+        quantize_static(
+            model_input=str(prepared),
+            model_output=str(output),
+            calibration_data_reader=LoaderCalibrationReader(calibration_loader, calibration_batches),
+            quant_format=QuantFormat.QDQ,
+            activation_type=activation_types[activation_key],
+            weight_type=QuantType.QInt8,
+            calibrate_method=methods[method_key],
+            per_channel=per_channel,
+            reduce_range=False,
+            op_types_to_quantize=op_types_to_quantize,
+            nodes_to_exclude=nodes_to_exclude,
+            extra_options={
+                "ActivationSymmetric": False,
+                "WeightSymmetric": True,
+                "ForceQuantizeNoInputCheck": False,
+            },
+        )
+    finally:
+        if prepared.exists():
+            prepared.unlink()
     return output
 
 
@@ -139,6 +204,8 @@ def evaluate_onnx(
             total_examples += targets.numel()
             labels.extend(targets.tolist())
             predictions.extend(logits.argmax(dim=1).tolist())
+            if index == 0 or (index + 1) % 25 == 0:
+                print(f"ONNX evaluation {Path(model_path).name}: {index + 1} batches, {total_examples} examples", flush=True)
     if not labels:
         raise RuntimeError("Evaluation loader produced no examples")
     return {

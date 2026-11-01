@@ -1,7 +1,7 @@
 # RQ7.1 — Lightweight model compression
 
 Release candidate on `feature/rq7.1-model-compression`. Compare both architectures
-independently; there is no single best-backbone selection step.
+independently;
 
 ## Fixed protocol
 

@@ -25,6 +25,6 @@ Twenty-percent pruning was selected independently for both backbones. EfficientN
 
 ## Scope and limitations
 
-This directory reports seed 14 only. Multi-seed conclusions require the matching seed-27 and seed-42 runs and their variability. Hosted CPU latency is not a low-cost-device benchmark; cross-platform timings require a common target. The protocol separates known author leaf-ID and exact-hash components, but unresolved leaf identities and unscreened near duplicates remain limitations. Historical test results were inspected before the validation-protocol revision. Legacy-split results must not be pooled with these results.
+Hosted CPU latency is not a low-cost-device benchmark; cross-platform timings require a common target. The protocol separates known author leaf-ID and exact-hash components, but unresolved leaf identities and unscreened near duplicates remain limitations. Historical test results were inspected before the validation-protocol revision. Legacy-split results must not be pooled with these results.
 
-Datasets, weights and output archives are retained outside Git. Scientific gate failures and limitations are part of the result, not debugging commentary.
+Datasets, weights and output archives are retained outside Git. Scientific gate failures and limitations are part of the result.

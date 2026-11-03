@@ -18,7 +18,16 @@ The reported runs execute `rq71_hybrid_v2_source.zip`, SHA256:
 8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2
 ```
 
-The archive is supplied through the attached Kaggle source dataset or Google Drive. The notebooks verify all 46 source-file fingerprints. This pinned snapshot is the authoritative execution source for the reported hybrid-v2 runs. The repository's earlier modular scripts and `splits/` are retained for reference and testing; their legacy split must not be substituted for hybrid-v2. Source-snapshot reconciliation remains required before claiming that the repository alone reproduces the final experiments.
+The archive is supplied through the attached Kaggle source dataset or Google Drive. The notebooks verify all 46 source-file fingerprints. Matching execution scripts and fixed manifests are also available directly in this repository; see `hybrid_source_provenance.json` for their fingerprints. Documentation has been updated and the legacy split generator removed without changing training logic. The old `splits/` and numbered modular notebooks remain reference material, not the final hybrid-v2 entrypoint.
+
+To run from this directory after installing the scoped requirements:
+
+```bash
+python -u stage_hybrid_v2.py --source /path/to/rq71_plantvillage.tar --output /path/to/NEW_local_images --manifest-dir splits_hybrid_v2
+python -u run_three_seeds.py --config configs/full.json --data-dir /path/to/NEW_local_images --manifest-dir splits_hybrid_v2 --output-root /path/to/results --split-version hybrid-v2 --seeds 42
+```
+
+The second command performs preflight only. Add `--execute` to launch training. Run seeds 14, 27 and 42 separately using the same fixed manifests and settings. Always supply `--split-version hybrid-v2`; the retained legacy mode is not the reported protocol. The cloud notebooks continue to use the original pinned bundle so that their execution source remains identical to the saved runs.
 
 ## Fixed protocol
 
@@ -43,27 +52,3 @@ The fixed hybrid-v2 assignment separates known author leaf-ID and exact-hash com
 | 14 | [Tables and provenance](results/RQ7_1_Model_Compression_Seed14/) | [Figures](figures/RQ7_1_Model_Compression_Seed14/) | Execution completed; MobileNet INT8 rejected |
 | 27 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed27/) | [Figures](figures/RQ7_1_Model_Compression_Seed27/) | Execution completed; MobileNet INT8 rejected |
 | 42 | Pending final audit | Pending final audit | Running at the last recorded status |
-
-An `ineligible_accuracy_gate` outcome is a negative scientific result, not an eligible test score. The manifest can therefore be `partial` even when the notebook execution succeeds. Full models, histories and diagnostics remain in the saved Kaggle output. Curated figure folders include training histories, compression comparisons, reliability diagrams and in-distribution risk–coverage curves. These are not RQ7.3 OOD evaluations.
-
-## Repository layout
-
-- `notebooks/`: cloud reproduction notebooks and modular stage references.
-- `src/rq71/` and root Python scripts: reusable training, compression, evaluation and plotting support.
-- `configs/`, `splits/`, `tests/`: configuration, legacy manifests and regression checks.
-- `results/`, `figures/`: small curated scientific outputs; datasets and model weights are external.
-
-Read [ENVIRONMENT.md](ENVIRONMENT.md) for dependency guidance. Preserve the compatible runtime PyTorch/torchvision pair and record the actual hardware, package versions and source fingerprints. Useful static and regression checks are:
-
-```bash
-python check_release.py
-python -m unittest discover -s tests -p 'test_*.py'
-```
-
-These checks do not certify a complete cloud run.
-
-## Interpretation and limitations
-
-Report matched-seed metrics and variability only after all three runs are audited. Smaller artifacts are not necessarily faster; hosted CPU latency is a proxy, not a low-cost-device benchmark. Strict latency comparisons require a common target. 
-
-

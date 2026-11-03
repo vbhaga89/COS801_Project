@@ -50,5 +50,9 @@
     "Legacy prepare_plantvillage.py removed from active project",
     "Historical smoke_result.json omitted; it is not a research result"
   ],
-  "snapshot_note": "Hashes describe the original cloud execution source, not every current repository document."
+  "snapshot_note": "Hashes describe the original cloud execution source, not every current repository document.",
+  "repository_renames": {
+    "stage_hybrid_v2.py": "stage_plantvillage.py"
+  },
+  "repository_renames_note": "Original cloud snapshot hash keys are retained. The repository staging implementation is unchanged; the integration test import and active documentation use the new filename. Frozen cloud bundles and notebooks retain their original internal name."
 }

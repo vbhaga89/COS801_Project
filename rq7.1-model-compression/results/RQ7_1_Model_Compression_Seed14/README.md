@@ -15,7 +15,7 @@ RQ7.1 compares quantisation, structured pruning and knowledge distillation indep
 
 `test_results.csv` contains selected columns extracted at displayed precision from the saved Kaggle `final_comparison.csv` preview. It is a derived report table, not a byte-identical copy of that original file. The saved Kaggle version is the authoritative record for full manifests, histories, diagnostics, models and the 39 listed figures. The complete output archive has not been verified locally.
 
-The companion notebook is an output-free reproduction entrypoint, not a copy of the executed Kaggle notebook. It verifies the pinned source bundle, stages data locally, checks the complete dataset and runs the experiment with an explicit training opt-in. Source and image archives must be supplied at its configured paths.
+The companion notebook is an output-free reproduction entrypoint, not a copy of the executed Kaggle notebook. It checks out a pinned GitHub commit, validates the final manifests, stages data locally and checks the complete dataset before training with an explicit training opt-in. Supply the image archive at the configured path and provide private-repository read access through the GITHUB_TOKEN secret. Training requires RUN_FULL=True. The saved Kaggle run retains its original bundle provenance; the current notebook is a separate cleaned-source reproduction entrypoint.
 
 ## Outcomes
 

@@ -1,80 +1,69 @@
-# RQ7.1 — Lightweight model compression
+# RQ7.1 — Model compression
 
-Release candidate on `feature/rq7.1-model-compression`. Compare both architectures
-independently;
+Comparative evaluation of INT8 quantisation, structured pruning and knowledge distillation for **MobileNetV3-Small** and **EfficientNet-B0**. Each compressed model is compared with its matching FP32 baseline; neither backbone is selected as the sole reference.
+
+## Reproduce the reported experiment
+
+Use the sectioned cloud notebooks, one seed per run:
+
+- [Seed 14](notebooks/RQ7_1_Model_Compression_Seed14.ipynb)
+- [Seed 27](notebooks/RQ7_1_Model_Compression_Seed27.ipynb)
+- [Seed 42](notebooks/RQ7_1_Model_Compression_Seed42.ipynb)
+
+These notebooks support Kaggle and Colab. Attach the audited image archive and pinned source bundle at the configured paths. Review `RUN_FULL` before running all sections. Source verification, GPU/environment checks, image staging and full-data preflight precede training. Every execution creates a timestamped output directory; backups do not implement checkpoint resume.
+
+The reported runs execute `rq71_hybrid_v2_source.zip`, SHA256:
+
+```text
+8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2
+```
+
+The archive is supplied through the attached Kaggle source dataset or Google Drive. The notebooks verify all 46 source-file fingerprints. This pinned snapshot is the authoritative execution source for the reported hybrid-v2 runs. The repository's earlier modular scripts and `splits/` are retained for reference and testing; their legacy split must not be substituted for hybrid-v2. Source-snapshot reconciliation remains required before claiming that the repository alone reproduces the final experiments.
 
 ## Fixed protocol
 
-- Seeds **14, 27, 42**; one audited 38-class RGB PlantVillage split.
-- Training batch size **64**; baseline **20 epochs** (3 head + 17 fine-tuning).
-- Pruning recovery: **5 epochs** per ratio 0.1/0.2/0.3.
-- CE/KD students: **20 epochs**, fixed alpha 0.5 and temperature 4.
-- Separate frozen-feature linear probes: 3 learning-rate trials, 10 epochs each.
-- Validation selects checkpoints/hyperparameters; test data do not tune them.
+| Setting | Value |
+|---|---|
+| Training seeds | 14, 27, 42 |
+| Split seed | 16153790 |
+| Dataset | 54,299 RGB PlantVillage images, 38 classes |
+| Train / validation / test | 38,147 / 5,448 / 10,704 |
+| Training batch size | 64 |
+| Baseline training | 3 head-training + 17 fine-tuning epochs |
+| Frozen-feature linear probes | 3 learning-rate trials, 10 epochs each |
+| Pruning candidates | 0.10, 0.20, 0.30; 5 recovery epochs each |
+| CE / KD students | 20 epochs each; KD alpha 0.5, temperature 4 |
 
-## Structure
+The fixed hybrid-v2 assignment separates known author leaf-ID and exact-hash components. Six exact duplicate images are excluded from the original collection. Validation selects checkpoints, pruning ratios and INT8 candidates. Test results are not used by those selection routines.
 
-`src/rq71/`: reusable models, loading, training, compression, and selection.
-`configs/`: budgets. `splits/`: immutable manifests/class mapping/hash protocol.
-`tests/`: regression tests. `results/`: curated small evidence and external run
-locations. `figures/`: curated report plots.
-## Numbered notebooks
+## Results and figures
 
-1. `notebooks/01_dataset_setup_eda.ipynb`: environment/data preflight and EDA.
-2. `notebooks/02_train_baselines.ipynb`: tuned linear probes and both baselines.
-3. `notebooks/03_compression.ipynb`: independent compression tracks.
-4. `notebooks/04_final_evaluation.ipynb`: selected-model prediction analysis,
-   figures, and three-seed aggregation.
+| Seed | Results | Original report figures | Status |
+|---|---|---|---|
+| 14 | [Tables and provenance](results/RQ7_1_Model_Compression_Seed14/) | [Figures](figures/RQ7_1_Model_Compression_Seed14/) | Execution completed; MobileNet INT8 rejected |
+| 27 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed27/) | [Figures](figures/RQ7_1_Model_Compression_Seed27/) | Execution completed; MobileNet INT8 rejected |
+| 42 | Pending final audit | Pending final audit | Running at the last recorded status |
 
-Set PROJECT, DATA and RESULTS explicitly. Save notebook 02's exact RUN path for
-03/04. Execution is disabled by default. Stages use `run_stage.py`, preserve
-config hashes, check prerequisites, and reject silent reruns. 
+An `ineligible_accuracy_gate` outcome is a negative scientific result, not an eligible test score. The manifest can therefore be `partial` even when the notebook execution succeeds. Full models, histories and diagnostics remain in the saved Kaggle output. Curated figure folders include training histories, compression comparisons, reliability diagrams and in-distribution risk–coverage curves. These are not RQ7.3 OOD evaluations.
 
-## Environment and checks
+## Repository layout
 
-Read [ENVIRONMENT.md](ENVIRONMENT.md). The shared root uv.lock is not asserted to
-reproduce the tested Kaggle runtime. Preserve its compatible GPU torch/torchvision
-pair; use this folder's scoped requirements. The direct pins are not a complete
-transitive lock.
+- `notebooks/`: cloud reproduction notebooks and modular stage references.
+- `src/rq71/` and root Python scripts: reusable training, compression, evaluation and plotting support.
+- `configs/`, `splits/`, `tests/`: configuration, legacy manifests and regression checks.
+- `results/`, `figures/`: small curated scientific outputs; datasets and model weights are external.
 
-Run from this directory:
+Read [ENVIRONMENT.md](ENVIRONMENT.md) for dependency guidance. Preserve the compatible runtime PyTorch/torchvision pair and record the actual hardware, package versions and source fingerprints. Useful static and regression checks are:
 
 ```bash
 python check_release.py
 python -m unittest discover -s tests -p 'test_*.py'
-python check_environment.py --require-cuda --output environment.json
-python run_three_seeds.py --data-dir DATA --manifest-dir splits --output-root RESULTS
 ```
 
-The final command only checks data; add `--execute` deliberately to launch.
-The default runs all three seeds sequentially. For bounded sessions, use
-`--seeds 14 27`, then `--seeds 42`, and aggregate the explicit three seed folders.
-No automatic batch-size reduction or official CPU fallback.
+These checks do not certify a complete cloud run.
 
-## Data and outputs
+## Interpretation and limitations
 
-Train/validation/test counts are **38,146 / 5,449 / 10,704**. Stage images on
-runtime-local storage and load only manifest records. Extra physical duplicate
-files do not re-enter the split. Never regenerate a random split for each seed.
-Exact-hash checks do not prove leaf-group or near-duplicate independence.
+Report matched-seed metrics and variability only after all three runs are audited. Smaller artifacts are not necessarily faster; hosted CPU latency is a proxy, not a low-cost-device benchmark. Strict latency comparisons require a common target. Known leaf-ID separation does not resolve missing leaf identities or unscreened near duplicates. Historical test results were inspected before the protocol revision, which must be disclosed; legacy and hybrid-v2 results are not equivalent repetitions.
 
-Each timestamped run preserves config, logs, models, selection evidence,
-predictions and figures. Only admitted final-table artifacts receive prediction
-analysis. Temperature is selected on validation NLL.
-
-INT8/pruning accuracy-gate rejection is recorded as **partial**, with no fabricated
-eligible test row. Other exceptions are fatal. Summaries check configuration and
-split-hash equality and report sample SD and contributing n. Hardware/environment
-comparability still needs review. Cloud CPU latency is not target-device proof.
-
-## Verification and release status
-
-The three-seed staged synthetic Kaggle smoke completed, including prediction
-analysis and aggregation. Separate real-image hash/decode and GPU startup tests
-passed. The bounded real batch64 check logged successful updates/validation
-forward passes for both architectures; final run/artifact audit remains required.
-
-
-Full-data release-candidate run submitted on Kaggle (version `364659822`):
-https://www.kaggle.com/code/makungundlovu/rq71-full-data-release-run?scriptVersionId=364659822
-
+Final aggregation, seed-42 artifact verification and report integration remain pending. Dataset licensing and provenance must be documented in the submission. The models have not been validated for field diagnosis or deployment decisions.

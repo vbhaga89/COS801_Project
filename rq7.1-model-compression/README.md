@@ -10,15 +10,11 @@ Use the sectioned cloud notebooks, one seed per run:
 - [Seed 27](notebooks/RQ7_1_Model_Compression_Seed27.ipynb)
 - [Seed 42](notebooks/RQ7_1_Model_Compression_Seed42.ipynb)
 
-These notebooks support Kaggle and Colab. Attach the audited image archive and pinned source bundle at the configured paths. Review `RUN_FULL` before running all sections. Source verification, GPU/environment checks, image staging, and full-data preflight precede training. Every execution creates a timestamped output directory; backups do not implement checkpoint resume.
+These notebooks support Kaggle and Colab and check out repository commit `c9849c4fed12dd15e05801c860ae37af078e60a4`. They use `stage_plantvillage.py` and the single final `splits/` directory. No source ZIP is required. Attach the audited image archive at the configured path, enable Internet and provide a read-access `GITHUB_TOKEN` secret for this private repository. Kaggle saved background runs require the secret to be attached in advance; Colab can use its secret store or a hidden interactive prompt. Never put tokens in code or outputs.
 
-The reported runs execute `rq71_hybrid_v2_source.zip`, SHA256:
+Review `RUN_FULL` before running all sections; training is disabled by default. Source-commit verification, fixed-manifest checks, GPU/environment checks, image staging and full-data preflight precede training. Every execution creates a timestamped output directory; backups do not implement checkpoint resume. The numbered modular notebooks remain stage references.
 
-```text
-8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2
-```
-
-The archive is supplied through the attached Kaggle source dataset or Google Drive. The notebooks verify all 46 source-file fingerprints. Matching execution scripts and fixed manifests are also available directly in this repository; see `hybrid_source_provenance.json` for their fingerprints. Documentation has been updated and the legacy split generator removed without changing training logic. `splits/` is the only active manifest directory and contains the final reviewed assignments. The numbered modular notebooks remain stage references; use the seed notebooks or commands below for the reported experiment.
+Historical saved Kaggle runs used `rq71_hybrid_v2_source.zip`, SHA256 `8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2`. Their saved versions remain unchanged. The final GitHub notebooks use the cleaned pinned commit; record that provenance separately. Five notebook checks pass, but a complete run of these new checkout entrypoints has not yet been demonstrated.
 
 To run from this directory after installing the scoped requirements:
 
@@ -45,7 +41,7 @@ The second command performs preflight only. Add `--execute` to launch training. 
 
 The fixed hybrid-v2 assignment separates known author leaf-ID and exact-hash components. Six exact duplicate images are excluded from the original collection. Validation selects checkpoints, pruning ratios, and INT8 candidates. Test results are not used by those selection routines.
 
-The repository entrypoint is `stage_plantvillage.py` and its default manifest directory is `splits/`. The frozen cloud bundle retains `stage_hybrid_v2.py` and `splits_hybrid_v2/`; cloud notebooks intentionally use those original internal paths. Image assignments, hash validation and training settings are unchanged.
+The repository and final seed notebooks both use `stage_plantvillage.py` and `splits/`. Historical cloud source archives retain their original internal paths as execution evidence. Image assignments, hash validation and training settings are unchanged.
 
 ## Results and figures
 

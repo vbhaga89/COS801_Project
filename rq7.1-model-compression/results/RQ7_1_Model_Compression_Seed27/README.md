@@ -15,7 +15,7 @@ RQ7.1 compares quantisation, structured pruning and knowledge distillation indep
 
 `final_comparison.csv` and `full_run_manifest.json` are original files downloaded from the saved Kaggle output. `test_results.csv` is a selected-column report table derived from the original CSV without changing numeric values. The saved Kaggle version remains the authoritative record for complete histories, diagnostics, models and the 39 listed figures. This directory is not a complete output archive.
 
-The companion notebook in `../../notebooks/RQ7_1_Model_Compression_Seed27.ipynb` is an output-free reproduction entrypoint. It verifies the pinned source bundle, stages data locally, checks the complete dataset and runs the experiment. Source and image archives must be supplied at its configured paths. The curated original report figures are in `../../figures/RQ7_1_Model_Compression_Seed27/`.
+The companion notebook in `../../notebooks/RQ7_1_Model_Compression_Seed27.ipynb` is an output-free reproduction entrypoint. It checks out a pinned GitHub commit, validates the final manifests, stages data locally and checks the complete dataset before training. Supply the image archive at the configured path and provide private-repository read access through the GITHUB_TOKEN secret. Training requires RUN_FULL=True. The saved Kaggle run retains its original bundle provenance; the current notebook is a separate cleaned-source reproduction entrypoint. The curated original report figures are in `../../figures/RQ7_1_Model_Compression_Seed27/`.
 
 ## Outcomes
 

@@ -1,6 +1,6 @@
 # RQ7.1 hybrid-v2 manifests
 
-Fixed assignments used for the seed-14, seed-27, and seed-42 hybrid-v2 experiments.
+Fixed assignments used for the seed-14, seed-27, and seed-42 experiments.
 | Partition | Images | Classes |
 |---|---:|---:|
 | Train | 38,147 | 38 |

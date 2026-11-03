@@ -1,6 +1,6 @@
 # RQ7.1 — Model compression
 
-Comparative evaluation of INT8 quantisation, structured pruning and knowledge distillation for **MobileNetV3-Small** and **EfficientNet-B0**. Each compressed model is compared with its matching FP32 baseline; neither backbone is selected as the sole reference.
+Comparative evaluation of INT8 quantisation, structured pruning and knowledge distillation for **MobileNetV3-Small** and **EfficientNet-B0**. Each compressed model is compared with its matching FP32 baseline;
 
 ## Reproduce the reported experiment
 
@@ -10,7 +10,7 @@ Use the sectioned cloud notebooks, one seed per run:
 - [Seed 27](notebooks/RQ7_1_Model_Compression_Seed27.ipynb)
 - [Seed 42](notebooks/RQ7_1_Model_Compression_Seed42.ipynb)
 
-These notebooks support Kaggle and Colab. Attach the audited image archive and pinned source bundle at the configured paths. Review `RUN_FULL` before running all sections. Source verification, GPU/environment checks, image staging and full-data preflight precede training. Every execution creates a timestamped output directory; backups do not implement checkpoint resume.
+These notebooks support Kaggle and Colab. Attach the audited image archive and pinned source bundle at the configured paths. Review `RUN_FULL` before running all sections. Source verification, GPU/environment checks, image staging, and full-data preflight precede training. Every execution creates a timestamped output directory; backups do not implement checkpoint resume.
 
 The reported runs execute `rq71_hybrid_v2_source.zip`, SHA256:
 
@@ -34,7 +34,7 @@ The archive is supplied through the attached Kaggle source dataset or Google Dri
 | Pruning candidates | 0.10, 0.20, 0.30; 5 recovery epochs each |
 | CE / KD students | 20 epochs each; KD alpha 0.5, temperature 4 |
 
-The fixed hybrid-v2 assignment separates known author leaf-ID and exact-hash components. Six exact duplicate images are excluded from the original collection. Validation selects checkpoints, pruning ratios and INT8 candidates. Test results are not used by those selection routines.
+The fixed hybrid-v2 assignment separates known author leaf-ID and exact-hash components. Six exact duplicate images are excluded from the original collection. Validation selects checkpoints, pruning ratios, and INT8 candidates. Test results are not used by those selection routines.
 
 ## Results and figures
 
@@ -64,6 +64,6 @@ These checks do not certify a complete cloud run.
 
 ## Interpretation and limitations
 
-Report matched-seed metrics and variability only after all three runs are audited. Smaller artifacts are not necessarily faster; hosted CPU latency is a proxy, not a low-cost-device benchmark. Strict latency comparisons require a common target. Known leaf-ID separation does not resolve missing leaf identities or unscreened near duplicates. Historical test results were inspected before the protocol revision, which must be disclosed; legacy and hybrid-v2 results are not equivalent repetitions.
+Report matched-seed metrics and variability only after all three runs are audited. Smaller artifacts are not necessarily faster; hosted CPU latency is a proxy, not a low-cost-device benchmark. Strict latency comparisons require a common target. 
 
-Final aggregation, seed-42 artifact verification and report integration remain pending. Dataset licensing and provenance must be documented in the submission. The models have not been validated for field diagnosis or deployment decisions.
+

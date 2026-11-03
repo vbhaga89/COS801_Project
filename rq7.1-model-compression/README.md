@@ -23,7 +23,7 @@ python -u stage_plantvillage.py --source /path/to/rq71_plantvillage.tar --output
 python -u run_three_seeds.py --config configs/full.json --data-dir /path/to/NEW_local_images --manifest-dir splits --output-root /path/to/results --split-version hybrid-v2 --seeds 42
 ```
 
-The second command performs preflight only. Add `--execute` to launch training. Run seeds 14, 27 and 42 separately using the same fixed manifests and settings. The launcher defaults to the final protocol and rejects legacy mode; the explicit `--split-version hybrid-v2` above records that choice. The cloud notebooks continue to use the original pinned bundle so that their execution source remains identical to the saved runs.
+The second command performs preflight only. Add `--execute` to launch training. Run seeds 14, 27 and 42 separately using the same fixed manifests and settings. The launcher defaults to the final protocol and rejects legacy mode; the explicit `--split-version hybrid-v2` above records that choice. The saved Kaggle versions retain their original source bundle; the current cloud reproduction notebooks check out the cleaned pinned GitHub commit.
 
 ## Fixed protocol
 
@@ -49,7 +49,7 @@ The repository and final seed notebooks both use `stage_plantvillage.py` and `sp
 |---|---|---|---|
 | 14 | [Tables and provenance](results/RQ7_1_Model_Compression_Seed14/) | [Figures](figures/RQ7_1_Model_Compression_Seed14/) | Execution completed; MobileNet INT8 rejected |
 | 27 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed27/) | [Figures](figures/RQ7_1_Model_Compression_Seed27/) | Execution completed; MobileNet INT8 rejected |
-| 42 | Pending final audit | Pending final audit | Running at the last recorded status |
+| 42 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed42/) | [Figures](figures/RQ7_1_Model_Compression_Seed42/) | Execution completed; MobileNet INT8 rejected |
 
 An `ineligible_accuracy_gate` outcome is a negative scientific result, not an eligible test score. The manifest can therefore be `partial` even when the notebook execution succeeds. Full models, histories and diagnostics remain in the saved Kaggle output. Curated figure folders include training histories, compression comparisons, reliability diagrams and in-distribution risk–coverage curves. These are not RQ7.3 OOD evaluations.
 
@@ -73,6 +73,26 @@ These checks do not certify a complete cloud run.
 
 ## Interpretation and limitations
 
-Report matched-seed metrics and variability only after all three runs are audited. Smaller artifacts are not necessarily faster; hosted CPU latency is a proxy, not a low-cost-device benchmark. Strict latency comparisons require a common target. Known leaf-ID separation does not resolve missing leaf identities or unscreened near duplicates. Historical test results were inspected before the protocol revision, which must be disclosed; legacy and hybrid-v2 results are not equivalent repetitions.
+The saved runs pass matched scientific-configuration, source-bundle/source-file, split-hash and recorded-environment checks. Report means and sample SD across the three training seeds on the same fixed split. Smaller artifacts are not necessarily faster; hosted CPU latency is a proxy, not a low-cost-device benchmark. Strict latency comparisons require a common target. Known leaf-ID separation does not resolve missing leaf identities or unscreened near duplicates. Historical test results were inspected before the protocol revision, which must be disclosed; legacy and hybrid-v2 results are not equivalent repetitions.
 
-Final aggregation, seed-42 artifact verification and report integration remain pending. Dataset licensing and provenance must be documented in the submission. The models have not been validated for field diagnosis or deployment decisions.
+The three saved runs and 27 admitted-artifact evaluations have been consolidated in [the three-seed summary](results/three_seed_summary/). Report integration and independently stored full-output backups remain separate finalisation tasks. Dataset provenance and the upstream licence declaration are documented below. The models have not been validated for field diagnosis or deployment decisions.
+
+
+## Reproduce the final tables
+
+The [three-seed summary](results/three_seed_summary/) includes the comparison, calibration, ID selective-risk and supported worst-group tables. No missing MobileNet INT8 score is imputed. Selected MobileNet pruning ratios are 20%, 20%, 10% for seeds 14, 27, 42; EfficientNet selects 20% throughout. These are validation-selected procedures, not identical fixed-ratio test comparisons.
+
+```bash
+python results/three_seed_summary/reproduce_summary.py --results-root results --output reproduced_summary
+python -m unittest discover -s results/three_seed_summary -p 'test_*.py'
+```
+
+These commands use the committed original comparison CSVs, saved configurations/provenance and compact evaluation extracts. They require only Python's standard library, with no images, model weights, cloud credentials or retraining. Five regression tests verify the summary and rejection of mismatched settings, splits, environments and duplicate evaluations.
+
+## Data provenance, licensing and intended use
+
+The experiment uses RGB PlantVillage images in controlled acquisition conditions. The project-specific manifest identifies 54,299 retained images and excludes six known exact duplicate copies. This audited count is release-specific and should not be substituted for the counts of other PlantVillage distributions. The fixed manifest hashes and partial leaf-ID grouping limitations are retained in each seed's `split_protocol.json`.
+
+The [authors' dataset card](https://github.com/spMohanty/PlantVillage-Dataset/blob/master/README_HF.md) declares **CC BY-SA 3.0** (checked 4 November 2026). The [authors' loader](https://github.com/spMohanty/PlantVillage-Dataset/blob/master/plant_village.py) also contains a licence-verification caveat. This records the upstream declaration, not independent clearance of every mirror or the exact local image archive. Preserve attribution and verify the archive's accompanying terms before redistributing images or weights. Dataset images and weights are not committed here; do not infer that the code's licence determines their terms.
+
+No human-subject data collection is claimed. Annotation-demographic information and field representativeness are not established. The models are research artifacts, not validated tools for autonomous diagnosis, pesticide recommendations or crop-destruction decisions. Acquisition-site/device subgroup metadata are unavailable; reported groups are crop and disease labels. Energy and monetary cost were not measured. Saved pipeline wall times are approximately 10 h 5 min (seed 14), 8 h 26 min (27) and 8 h 53 min (42), including staging and evaluation, not isolated training times.

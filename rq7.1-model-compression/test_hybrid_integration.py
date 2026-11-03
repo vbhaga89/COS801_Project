@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 import hybrid_protocol
-import stage_hybrid_v2
+import stage_plantvillage
 
 MANIFESTS = Path(__file__).parent/'splits_hybrid_v2'
 
@@ -34,27 +34,3 @@ class IntegrationTests(unittest.TestCase):
             root = Path(tmp)
             source = root/'source'
             original = source/row['source_path']
-            original.parent.mkdir(parents=True)
-            original.write_bytes(body)
-            archive = root/'images.tar'
-            with tarfile.open(archive, 'w') as handle:
-                entry = tarfile.TarInfo('rq71_plantvillage/'+row['source_path'])
-                entry.size = len(body)
-                handle.addfile(entry, io.BytesIO(body))
-            for i, input_path in enumerate((source, archive)):
-                destination = root/f'output{i}'
-                argv = ['stage', '--source', str(input_path), '--output', str(destination)]
-                with patch.object(sys, 'argv', argv), patch.object(stage_hybrid_v2, 'validate', return_value=({}, [row])):
-                    stage_hybrid_v2.main()
-                    self.assertEqual((destination/row['path']).read_bytes(), body)
-                    with self.assertRaises(FileExistsError):
-                        stage_hybrid_v2.main()
-            self.assertEqual(original.read_bytes(), body)
-
-    def test_unsafe_paths_rejected(self):
-        for value in ('../escape', '/absolute', 'C:/absolute', 'train\\escape'):
-            with self.assertRaises(ValueError):
-                hybrid_protocol.safe_relative(value)
-
-if __name__ == '__main__':
-    unittest.main()

@@ -1,0 +1,73 @@
+{
+  "seeds": [
+    14,
+    27,
+    42
+  ],
+  "scientific_settings_match": true,
+  "split_hashes_match": true,
+  "source_bundle_and_file_hashes_match": true,
+  "recorded_environments_match": true,
+  "expected_rows_per_seed": 9,
+  "evaluation_records": 27,
+  "statuses": [
+    {
+      "seed": 14,
+      "config_hash": "f94fcc529664",
+      "scientific_status": "partial",
+      "incomplete_stages": [
+        "quantization_mobilenet_v3_small"
+      ],
+      "source_bundle_sha256": "8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2",
+      "input_sha256": {
+        "config_seed14.json": "536c3532c26179612f2e3c0c5d3ac538a9b33a2e5293e73fadd10bd80a8a1fba",
+        "environment.json": "12d6001241131f0810859103d238b8e8f5c927fb8dbd53dfc26823c91e795148",
+        "evaluation_metrics.json": "758ec1e43780f6916685ef0a77f80e79667859d782cb1d621bf876f10a69802a",
+        "final_comparison.csv": "d2bf20794f453f09bcfdb6c7f6094026bb13190b59613258691dbd9cd63ed42b",
+        "full_run_manifest.json": "f26cb689ba535bc53e942e84ec0ea5126715a66b485d8ff59a077c72e68de0db",
+        "source_provenance.json": "db048d2d772c4dfb5174feb0477080e39d7f27ea039a90cc2219f21f1bd1bf10",
+        "split_protocol.json": "0199d5b405a73c7e736ef936f268f0f204d1991d3649e37432a5436742bc6516",
+        "test_results.csv": "597718a704bc9a75396de855b4e5e3e21c6ad4a87934dd95cebc0b2229ad3770"
+      }
+    },
+    {
+      "seed": 27,
+      "config_hash": "8a4b68bd5c6b",
+      "scientific_status": "partial",
+      "incomplete_stages": [
+        "quantization_mobilenet_v3_small"
+      ],
+      "source_bundle_sha256": "8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2",
+      "input_sha256": {
+        "config_seed27.json": "60f42ab12b00b6b400a3437ad4439b27f71523dcb51368d1ce15afc7e2663f2a",
+        "environment.json": "12d6001241131f0810859103d238b8e8f5c927fb8dbd53dfc26823c91e795148",
+        "evaluation_metrics.json": "d44899e3474b5ef1845f1c4a34e1e5c011b03f089999126ae37f5b86ddeb2d79",
+        "final_comparison.csv": "0cd8ce9c1d058f73d0c3053a25b7a4447ed232d6d20f874cface5a5383230c22",
+        "full_run_manifest.json": "fb64b71208928bab1c3a5f8bc1ed05ff377e350b12fddc3a08f26f48a20f41f7",
+        "source_provenance.json": "3751ce39390f1c4588506f091a69a0cabe585eb705bd7146aa35fec8c93f7cd2",
+        "split_protocol.json": "0199d5b405a73c7e736ef936f268f0f204d1991d3649e37432a5436742bc6516",
+        "test_results.csv": "b8463c7ef551e27b7ecffe3f2615aedf09790e7d793d868d09235253c66faa33"
+      }
+    },
+    {
+      "seed": 42,
+      "config_hash": "9dbf6b5f31b7",
+      "scientific_status": "partial",
+      "incomplete_stages": [
+        "quantization_mobilenet_v3_small"
+      ],
+      "source_bundle_sha256": "8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2",
+      "input_sha256": {
+        "config_seed42.json": "05ad0a9d9b14029b0fc8d80865cb5ea3660c4de1078c464790c7ed59b9364928",
+        "environment.json": "12d6001241131f0810859103d238b8e8f5c927fb8dbd53dfc26823c91e795148",
+        "evaluation_metrics.json": "58f7ac67167cf568d947bbe093fb1da0e1cae97d5376a9e2d5bdf2410f29c399",
+        "final_comparison.csv": "c430a66b2a898f7fe0a4a64dfb2560c46300c26e06a6ad3a32edf915349cd2b0",
+        "full_run_manifest.json": "f9cb2540e7fd5f146d9dea8d4f85679fa80f263c95f3b62221a0a150b2682c4a",
+        "source_provenance.json": "8c39584dd28452be615211bd3e1b9d3b062760a9a7408a96d75742a49e04371f",
+        "split_protocol.json": "0199d5b405a73c7e736ef936f268f0f204d1991d3649e37432a5436742bc6516",
+        "test_results.csv": "c6ecb1a72da90f088408d1f335e1768136066f208d7da4d3a9e40f85a4a63815"
+      }
+    }
+  ],
+  "interpretation": "Three training seeds on one fixed split, not independent dataset replications. SD is sample SD (ddof=1). MobileNet INT8 missing in all three seeds; no score imputed. Selected pruning is an adaptive validation-selected policy, not a fixed-ratio comparison. CPU latency describes hosted machines, not controlled device performance."
+}

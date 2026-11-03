@@ -10,7 +10,7 @@ from unittest.mock import patch
 import hybrid_protocol
 import stage_plantvillage
 
-MANIFESTS = Path(__file__).parent/'splits_hybrid_v2'
+MANIFESTS = Path(__file__).parent/'splits'
 
 class IntegrationTests(unittest.TestCase):
     def test_reviewed_protocol(self):

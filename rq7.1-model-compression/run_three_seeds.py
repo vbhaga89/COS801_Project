@@ -21,16 +21,15 @@ def validate_config(config):
         raise ValueError('Batch-limited/smoke configuration cannot be an official run')
 
 
-def verify_data(root, manifests, split_version='legacy'):
+def verify_data(root, manifests, split_version='hybrid-v2'):
     sys.path.insert(0, str(Path(__file__).parent / 'src'))
     from rq71.manifests import read_manifest
     protocol = json.loads((manifests / 'split_protocol.json').read_text())
-    if split_version == 'hybrid-v2':
-        from hybrid_protocol import validate, COUNTS
-        protocol, _ = validate(manifests)
-        expected = COUNTS
-    else:
-        expected = {'train': 38146, 'val': 5449, 'test': 10704}
+    if split_version != 'hybrid-v2':
+        raise ValueError('Only the final hybrid-v2 protocol is supported')
+    from hybrid_protocol import validate, COUNTS
+    protocol, _ = validate(manifests)
+    expected = COUNTS
     if protocol['counts'] != expected or protocol['classes'] != 38:
         raise ValueError('Official run requires the audited 54,299-image, 38-class split')
     seen = {}
@@ -56,11 +55,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, default=Path(__file__).parent / 'configs/full.json')
     parser.add_argument('--data-dir', type=Path, required=True)
-    parser.add_argument('--manifest-dir', type=Path, required=True)
+    parser.add_argument('--manifest-dir', type=Path, default=Path(__file__).parent / 'splits')
     parser.add_argument('--output-root', type=Path, required=True)
     parser.add_argument('--seeds', type=int, nargs='+', default=list(SEEDS))
     parser.add_argument('--execute', action='store_true')
-    parser.add_argument('--split-version', choices=['legacy', 'hybrid-v2'], default='legacy')
+    parser.add_argument('--split-version', choices=['hybrid-v2'], default='hybrid-v2')
     args = parser.parse_args()
     if len(set(args.seeds)) != len(args.seeds) or any(s not in SEEDS for s in args.seeds):
         parser.error('Use distinct seeds from 14, 27, 42')

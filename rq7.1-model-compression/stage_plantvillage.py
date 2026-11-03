@@ -10,7 +10,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, required=True, help='Original image root or .tar archive')
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--manifest-dir', type=Path, default=Path(__file__).parent/'splits_hybrid_v2')
+    parser.add_argument('--manifest-dir', type=Path, default=Path(__file__).parent/'splits')
     parser.add_argument('--archive-prefix', default='rq71_plantvillage')
     args = parser.parse_args()
     _, rows = validate(args.manifest_dir)

@@ -1,30 +1,30 @@
 # RQ7_1_Model_Compression_Seed14
 
-RQ7.1 compares quantisation, structured pruning and knowledge distillation independently for MobileNetV3-Small and EfficientNet-B0.
+RQ7.1 compares INT8 quantisation, structured pruning and knowledge distillation independently for MobileNetV3-Small and EfficientNet-B0.
 
 ## Execution
 
 - Training seed: **14**; batch size: **64**.
-- Source bundle SHA256: `8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2`.
 - Configuration hash: `f94fcc529664`.
-- Split: 38,147 training, 5,448 validation and 10,704 test images; 38 classes.
-- Hardware: Tesla T4; inference measured on Intel Xeon CPU at 2.00 GHz.
+- Source bundle SHA256: `8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2`.
+- Fixed split: 38,147 training, 5,448 validation and 10,704 test images; 38 classes.
+- Hardware: Tesla T4; hosted inference CPU: Intel Xeon at 2.00 GHz.
 - Duration: 36,310.4 seconds (10 h 5 min 10 s).
 - Python 3.13.15; PyTorch 2.11.0+cu128.
-- [Saved Kaggle execution and complete outputs](https://www.kaggle.com/code/makungundlovu/rq7-1-model-compression-seed14?scriptVersionId=364832930).
+- [Saved execution and full outputs](https://www.kaggle.com/code/makungundlovu/rq7-1-model-compression-seed14?scriptVersionId=364832930).
 
-`test_results.csv` contains selected columns extracted at displayed precision from the saved Kaggle `final_comparison.csv` preview. It is a derived report table, not a byte-identical copy of that original file. The saved Kaggle version is the authoritative record for full manifests, histories, diagnostics, models and the 39 listed figures. The complete output archive has not been verified locally.
+## Files
 
-The companion notebook is an output-free reproduction entrypoint, not a copy of the executed Kaggle notebook. It checks out a pinned GitHub commit, validates the final manifests, stages data locally and checks the complete dataset before training with an explicit training opt-in. Supply the image archive at the configured path and provide private-repository read access through the GITHUB_TOKEN secret. Training requires RUN_FULL=True. The saved Kaggle run retains its original bundle provenance; the current notebook is a separate cleaned-source reproduction entrypoint.
+`final_comparison.csv`, `full_run_manifest.json`, `config_seed14.json`, `split_protocol.json`, `environment.json` and `source_provenance.json` are unchanged original output files. `test_results.csv` selects report columns from the original CSV without changing numeric values. `evaluation_metrics.json` is a compact extract of the nine original evaluation files, preserving validation temperature selection, calibration, per-class/per-crop metrics, ID selective risk and source SHA256 fingerprints. Prediction arrays and risk-curve point arrays remain in Kaggle. This is not a complete checkpoint or output backup.
 
 ## Outcomes
 
-Both baselines, all pruning candidates, both CE/KD comparisons, EfficientNet INT8 and report generation completed. The experiment manifest is `partial` because MobileNet INT8 was rejected by the validation accuracy gate: FP32 ONNX accuracy 0.994677 versus best INT8 accuracy 0.254589. No MobileNet INT8 test result was produced.
+Both FP32 baselines, all pruning candidates, both CE/KD comparisons, EfficientNet INT8 and reporting completed. The scientific manifest is `partial` solely because MobileNet INT8 failed its validation accuracy gate. No MobileNet INT8 test score was produced or imputed. The selected pruning ratios and all valid metrics remain in the original table. Smaller files and budget eligibility do not establish latency speedup.
 
-Twenty-percent pruning was selected independently for both backbones. EfficientNet INT8 reduced artifact size by approximately 3.29 times, but increased measured CPU latency. Both pruned models were smaller but slower than their baselines. KD improved on the corresponding CE controls by 0.44 and 0.95 percentage points with MobileNet and EfficientNet teachers, respectively; both KD students missed the baseline-relative accuracy budget. Budget eligibility does not establish a latency speedup.
+The [three-seed summary](../three_seed_summary/) verifies matching scientific settings, split hashes, source fingerprints and recorded environments before combining seeds 14, 27 and 42. It reports means and sample SD, calibration and supported worst-group results. [Original figures](../../figures/RQ7_1_Model_Compression_Seed14/) retain their single-seed meaning.
 
-## Scope and limitations
+## Reproduction and limitations
 
-Hosted CPU latency is not a low-cost-device benchmark; cross-platform timings require a common target. The protocol separates known author leaf-ID and exact-hash components, but unresolved leaf identities and unscreened near duplicates remain limitations. Historical test results were inspected before the validation-protocol revision. Legacy-split results must not be pooled with these results.
+The [cloud notebook](../../notebooks/RQ7_1_Model_Compression_Seed14.ipynb) is an output-free cleaned reproduction entrypoint, not the executed notebook. It checks out pinned source commit `c9849c4`, validates the final manifests and stages the configured image archive. Private-repository read access uses the GITHUB_TOKEN secret; training requires RUN_FULL=True. The historical bundle remains unchanged; historical paths in saved records must not be rewritten.
 
-Datasets, weights and output archives are retained outside Git. Scientific gate failures and limitations are part of the result.
+Three seeds share one fixed split. Unknown leaf identities and unscreened near duplicates remain limitations. Historical test feedback preceded protocol revision; legacy-split results are not equivalent repetitions. Hosted CPU latency is not target-device validation. Dataset images, model weights and complete archives remain external.

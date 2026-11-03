@@ -1,0 +1,19 @@
+# RQ7_1_Model_Compression_Seed27 — figures
+
+Original PNG files from Kaggle script version `365106458`, run `run_20261103T034436_275661Z/seed_27`. These images were not regenerated or edited.
+
+| Figure | Content |
+|---|---|
+| `class_distribution.png` | Dataset class distribution |
+| `accuracy_vs_size.png` | Test accuracy versus serialized model size |
+| `accuracy_vs_latency.png` | Test accuracy versus hosted-CPU inference latency |
+| `training_baselines.png` | Baseline training histories for both backbones |
+| `training_pruning.png` | Recovery histories for pruning candidates |
+| `training_student_ce.png` | CE training histories for control and distilled students |
+| `training_kd_objective.png` | Knowledge-distillation objective histories |
+
+The 18 files named `<analysis_id>__reliability.png` and `<analysis_id>__risk_coverage.png` contain calibration and selective-risk diagrams for the nine evaluated artifacts. Analysis IDs retain the original Kaggle folder names, so repeated figure names remain unambiguous. These curves describe in-distribution selective prediction, not RQ7.3 OOD detection.
+
+This directory contains 25 verified original PNG files. It curates the combined training panels and all calibration/risk–coverage plots; Kaggle retains the additional 14 individual training plots. These are single-seed results, not multi-seed averages. `sha256.json` records the downloaded figure fingerprints.
+
+[Authoritative Kaggle output](https://www.kaggle.com/code/makungundlovu/rq7-1-model-compression-seed27/output?scriptVersionId=365106458)

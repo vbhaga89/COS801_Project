@@ -23,7 +23,7 @@ The archive is supplied through the attached Kaggle source dataset or Google Dri
 To run from this directory after installing the scoped requirements:
 
 ```bash
-python -u stage_hybrid_v2.py --source /path/to/rq71_plantvillage.tar --output /path/to/NEW_local_images --manifest-dir splits_hybrid_v2
+python -u stage_plantvillage.py --source /path/to/rq71_plantvillage.tar --output /path/to/NEW_local_images --manifest-dir splits_hybrid_v2
 python -u run_three_seeds.py --config configs/full.json --data-dir /path/to/NEW_local_images --manifest-dir splits_hybrid_v2 --output-root /path/to/results --split-version hybrid-v2 --seeds 42
 ```
 
@@ -45,10 +45,4 @@ The second command performs preflight only. Add `--execute` to launch training. 
 
 The fixed hybrid-v2 assignment separates known author leaf-ID and exact-hash components. Six exact duplicate images are excluded from the original collection. Validation selects checkpoints, pruning ratios, and INT8 candidates. Test results are not used by those selection routines.
 
-## Results and figures
-
-| Seed | Results | Original report figures | Status |
-|---|---|---|---|
-| 14 | [Tables and provenance](results/RQ7_1_Model_Compression_Seed14/) | [Figures](figures/RQ7_1_Model_Compression_Seed14/) | Execution completed; MobileNet INT8 rejected |
-| 27 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed27/) | [Figures](figures/RQ7_1_Model_Compression_Seed27/) | Execution completed; MobileNet INT8 rejected |
-| 42 | Pending final audit | Pending final audit | Running at the last recorded status |
+The repository entrypoint `stage_plantvillage.py` is a filename-only rename of `stage_hybrid_v2.py` in the frozen cloud bundle. Its implementation is unchanged. Cloud notebooks intentionally use the old name inside that verified bundle; direct repository commands use the new name.

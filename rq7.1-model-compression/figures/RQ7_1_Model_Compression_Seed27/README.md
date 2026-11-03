@@ -12,7 +12,7 @@ Original PNG files from Kaggle script version `365106458`, run `run_20261103T034
 | `training_student_ce.png` | CE training histories for control and distilled students |
 | `training_kd_objective.png` | Knowledge-distillation objective histories |
 
-The 18 files named `<analysis_id>__reliability.png` and `<analysis_id>__risk_coverage.png` contain calibration and selective-risk diagrams for the nine evaluated artifacts. Analysis IDs retain the original Kaggle folder names, so repeated figure names remain unambiguous. These curves describe in-distribution selective prediction, not RQ7.3 OOD detection.
+The 18 files named `<analysis_id>__reliability.png` and `<analysis_id>__risk_coverage.png` contain calibration and selective-risk diagrams for the nine evaluated artifacts. 
 
 This directory contains 25 verified original PNG files. It curates the combined training panels and all calibration/risk–coverage plots; Kaggle retains the additional 14 individual training plots. These are single-seed results, not multi-seed averages. `sha256.json` records the downloaded figure fingerprints.
 

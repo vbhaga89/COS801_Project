@@ -1,0 +1,10 @@
+seed,variant,model,teacher_model,compression,accuracy,macro_f1,model_size_mb,median_latency_ms,meets_accuracy_budget,valid_result
+27,baseline,mobilenet_v3_small,,none_fp32,0.9917787742899852,0.989163193810157,5.947922706604004,2.4597855,,True
+27,baseline,efficientnet_b0,,none_fp32,0.9946748878923768,0.9926675238443112,15.463744163513184,14.9110495,,True
+27,pruned,mobilenet_v3_small,mobilenet_v3_small,structured_channel_l2_r0.20,0.9631913303437968,0.9515869484801036,3.8646373748779297,3.6533325,1.0,True
+27,student_control,mobilenet_v3_small_050,mobilenet_v3_small,ce_only_control_for_mobilenet_v3_small,0.95254110612855,0.936936775294187,1.6370973587036133,1.250331,0.0,True
+27,distilled,mobilenet_v3_small_050,mobilenet_v3_small,kd_from_mobilenet_v3_small_a0.50_t4.0,0.9639387144992526,0.9522339319630998,1.6370973587036133,1.222494,1.0,True
+27,quantized,efficientnet_b0,efficientnet_b0,onnx_static_int8_qdq_percentile_quint8_per_channel_allops,0.9884155455904334,0.9854938689753592,4.706815719604492,18.5480605,1.0,True
+27,pruned,efficientnet_b0,efficientnet_b0,structured_channel_l2_r0.20,0.9785127055306428,0.9705651158898831,10.03437328338623,25.7485495,1.0,True
+27,student_control,mobilenet_v3_small_050,efficientnet_b0,ce_only_control_for_efficientnet_b0,0.9516068759342302,0.9344013106181324,1.6370973587036133,1.3592235,0.0,True
+27,distilled,mobilenet_v3_small_050,efficientnet_b0,kd_from_efficientnet_b0_a0.50_t4.0,0.9559977578475336,0.9421604532349984,1.6370973587036133,1.2942429999999998,0.0,True

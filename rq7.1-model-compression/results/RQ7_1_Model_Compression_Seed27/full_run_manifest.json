@@ -1,0 +1,127 @@
+{
+  "status": "partial",
+  "seed": 27,
+  "config_hash": "8a4b68bd5c6b",
+  "stages": [
+    {
+      "stage": "eda",
+      "status": "complete"
+    },
+    {
+      "stage": "baseline_mobilenet_v3_small",
+      "status": "complete"
+    },
+    {
+      "stage": "baseline_efficientnet_b0",
+      "status": "complete"
+    },
+    {
+      "stage": "compression_plan",
+      "status": "complete",
+      "policy": "compress both baselines independently",
+      "models": [
+        "mobilenet_v3_small",
+        "efficientnet_b0"
+      ],
+      "methods": [
+        "static_int8",
+        "structured_pruning",
+        "knowledge_distillation"
+      ],
+      "baseline_comparison": "each compressed result is compared with its matching FP32 baseline"
+    },
+    {
+      "stage": "quantization_mobilenet_v3_small",
+      "status": "ineligible_accuracy_gate",
+      "model": "mobilenet_v3_small",
+      "error": "INT8 validation sanity gate failed after isolated diagnostic sweep: FP32 ONNX=0.993759, best INT8=0.317915, drop=0.675844. Test split was not evaluated and invalid result was not added to metrics.csv. See /kaggle/working/rq71_hybrid_v2_20261103T033504_136050Z/results/run_20261103T034436_275661Z/seed_27/mobilenet_v3_small/quantization_diagnostics.json.",
+      "test_evaluated": false,
+      "diagnostics": "/kaggle/working/rq71_hybrid_v2_20261103T033504_136050Z/results/run_20261103T034436_275661Z/seed_27/mobilenet_v3_small/quantization_diagnostics.json"
+    },
+    {
+      "stage": "pruning_mobilenet_v3_small_0.10",
+      "status": "complete",
+      "model": "mobilenet_v3_small",
+      "pruning_ratio": 0.1
+    },
+    {
+      "stage": "pruning_mobilenet_v3_small_0.20",
+      "status": "complete",
+      "model": "mobilenet_v3_small",
+      "pruning_ratio": 0.2
+    },
+    {
+      "stage": "pruning_mobilenet_v3_small_0.30",
+      "status": "complete",
+      "model": "mobilenet_v3_small",
+      "pruning_ratio": 0.3
+    },
+    {
+      "stage": "pruning_selection_mobilenet_v3_small",
+      "status": "complete",
+      "model": "mobilenet_v3_small"
+    },
+    {
+      "stage": "distillation_mobilenet_v3_small",
+      "status": "complete",
+      "model": "mobilenet_v3_small"
+    },
+    {
+      "stage": "quantization_efficientnet_b0",
+      "status": "complete",
+      "model": "efficientnet_b0"
+    },
+    {
+      "stage": "pruning_efficientnet_b0_0.10",
+      "status": "complete",
+      "model": "efficientnet_b0",
+      "pruning_ratio": 0.1
+    },
+    {
+      "stage": "pruning_efficientnet_b0_0.20",
+      "status": "complete",
+      "model": "efficientnet_b0",
+      "pruning_ratio": 0.2
+    },
+    {
+      "stage": "pruning_efficientnet_b0_0.30",
+      "status": "complete",
+      "model": "efficientnet_b0",
+      "pruning_ratio": 0.3
+    },
+    {
+      "stage": "pruning_selection_efficientnet_b0",
+      "status": "complete",
+      "model": "efficientnet_b0"
+    },
+    {
+      "stage": "distillation_efficientnet_b0",
+      "status": "complete",
+      "model": "efficientnet_b0"
+    },
+    {
+      "stage": "report",
+      "status": "complete"
+    }
+  ],
+  "selection_policy": {
+    "architecture_comparison": "no reference-model selection; apply every compression method independently to both FP32 baselines",
+    "int8": "highest validation macro-F1, then validation accuracy",
+    "pruning": "highest pruning ratio within validation accuracy-drop budget",
+    "distillation": "fixed preconfigured alpha and temperature; no distillation-grid search"
+  },
+  "distillation_alpha": 0.5,
+  "distillation_temperature": 4.0,
+  "pruning_ratios": [
+    0.1,
+    0.2,
+    0.3
+  ],
+  "incomplete_stages": [
+    "quantization_mobilenet_v3_small"
+  ],
+  "compression_tracks": [
+    "mobilenet_v3_small",
+    "efficientnet_b0"
+  ]
+}

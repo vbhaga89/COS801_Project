@@ -51,7 +51,7 @@ The repository and final seed notebooks both use `stage_plantvillage.py` and `sp
 | 27 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed27/) | [Figures](figures/RQ7_1_Model_Compression_Seed27/) | Execution completed; MobileNet INT8 rejected |
 | 42 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed42/) | [Figures](figures/RQ7_1_Model_Compression_Seed42/) | Execution completed; MobileNet INT8 rejected |
 
-An `ineligible_accuracy_gate` outcome is a negative scientific result, not an eligible test score. The manifest can therefore be `partial` even when the notebook execution succeeds. Full models, histories and diagnostics remain in the saved Kaggle output. Curated figure folders include training histories, compression comparisons, reliability diagrams and in-distribution risk–coverage curves. These are not RQ7.3 OOD evaluations.
+An `ineligible_accuracy_gate` outcome is a negative scientific result, not an eligible test score. The manifest can therefore be `partial` even when the notebook execution succeeds. Full models, histories and diagnostics remain in the saved Kaggle output. Curated figure folders include training histories, compression comparisons, reliability diagrams and in-distribution risk–coverage curves.
 
 ## Repository layout
 

@@ -46,3 +46,36 @@ The second command performs preflight only. Add `--execute` to launch training. 
 The fixed hybrid-v2 assignment separates known author leaf-ID and exact-hash components. Six exact duplicate images are excluded from the original collection. Validation selects checkpoints, pruning ratios, and INT8 candidates. Test results are not used by those selection routines.
 
 The repository entrypoint `stage_plantvillage.py` is a filename-only rename of `stage_hybrid_v2.py` in the frozen cloud bundle. Its implementation is unchanged. Cloud notebooks intentionally use the old name inside that verified bundle; direct repository commands use the new name.
+
+## Results and figures
+
+| Seed | Results | Original report figures | Status |
+|---|---|---|---|
+| 14 | [Tables and provenance](results/RQ7_1_Model_Compression_Seed14/) | [Figures](figures/RQ7_1_Model_Compression_Seed14/) | Execution completed; MobileNet INT8 rejected |
+| 27 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed27/) | [Figures](figures/RQ7_1_Model_Compression_Seed27/) | Execution completed; MobileNet INT8 rejected |
+| 42 | Pending final audit | Pending final audit | Running at the last recorded status |
+
+An `ineligible_accuracy_gate` outcome is a negative scientific result, not an eligible test score. The manifest can therefore be `partial` even when the notebook execution succeeds. Full models, histories and diagnostics remain in the saved Kaggle output. Curated figure folders include training histories, compression comparisons, reliability diagrams and in-distribution risk–coverage curves. These are not RQ7.3 OOD evaluations.
+
+## Repository layout
+
+- `notebooks/`: cloud reproduction notebooks and modular stage references.
+- `src/rq71/` and root Python scripts: reusable training, compression, evaluation and plotting support.
+- `configs/`, `splits_hybrid_v2/`, `tests/`: configuration, final manifests and regression checks; `splits/` retains the earlier protocol.
+- `results/`, `figures/`: small curated scientific outputs; datasets and model weights are external.
+
+Read [ENVIRONMENT.md](ENVIRONMENT.md) for dependency guidance. Preserve the compatible runtime PyTorch/torchvision pair and record the actual hardware, package versions and source fingerprints. Useful static and regression checks are:
+
+```bash
+python check_release.py
+python test_hybrid_integration.py
+python -m unittest discover -s tests -p 'test_*.py'
+```
+
+These checks do not certify a complete cloud run.
+
+## Interpretation and limitations
+
+Report matched-seed metrics and variability only after all three runs are audited. Smaller artifacts are not necessarily faster; hosted CPU latency is a proxy, not a low-cost-device benchmark. Strict latency comparisons require a common target. Known leaf-ID separation does not resolve missing leaf identities or unscreened near duplicates. Historical test results were inspected before the protocol revision, which must be disclosed; legacy and hybrid-v2 results are not equivalent repetitions.
+
+Final aggregation, seed-42 artifact verification and report integration remain pending. Dataset licensing and provenance must be documented in the submission. The models have not been validated for field diagnosis or deployment decisions.

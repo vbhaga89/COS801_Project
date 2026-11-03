@@ -18,16 +18,16 @@ The reported runs execute `rq71_hybrid_v2_source.zip`, SHA256:
 8bf0c2a502caf94302ff310bf7b25756d5239aff1e95d02924591503550fa3b2
 ```
 
-The archive is supplied through the attached Kaggle source dataset or Google Drive. The notebooks verify all 46 source-file fingerprints. Matching execution scripts and fixed manifests are also available directly in this repository; see `hybrid_source_provenance.json` for their fingerprints. Documentation has been updated and the legacy split generator removed without changing training logic. The old `splits/` and numbered modular notebooks remain reference material, not the final hybrid-v2 entrypoint.
+The archive is supplied through the attached Kaggle source dataset or Google Drive. The notebooks verify all 46 source-file fingerprints. Matching execution scripts and fixed manifests are also available directly in this repository; see `hybrid_source_provenance.json` for their fingerprints. Documentation has been updated and the legacy split generator removed without changing training logic. `splits/` is the only active manifest directory and contains the final reviewed assignments. The numbered modular notebooks remain stage references; use the seed notebooks or commands below for the reported experiment.
 
 To run from this directory after installing the scoped requirements:
 
 ```bash
-python -u stage_plantvillage.py --source /path/to/rq71_plantvillage.tar --output /path/to/NEW_local_images --manifest-dir splits_hybrid_v2
-python -u run_three_seeds.py --config configs/full.json --data-dir /path/to/NEW_local_images --manifest-dir splits_hybrid_v2 --output-root /path/to/results --split-version hybrid-v2 --seeds 42
+python -u stage_plantvillage.py --source /path/to/rq71_plantvillage.tar --output /path/to/NEW_local_images --manifest-dir splits
+python -u run_three_seeds.py --config configs/full.json --data-dir /path/to/NEW_local_images --manifest-dir splits --output-root /path/to/results --split-version hybrid-v2 --seeds 42
 ```
 
-The second command performs preflight only. Add `--execute` to launch training. Run seeds 14, 27 and 42 separately using the same fixed manifests and settings. Always supply `--split-version hybrid-v2`; the retained legacy mode is not the reported protocol. The cloud notebooks continue to use the original pinned bundle so that their execution source remains identical to the saved runs.
+The second command performs preflight only. Add `--execute` to launch training. Run seeds 14, 27 and 42 separately using the same fixed manifests and settings. The launcher defaults to the final protocol and rejects legacy mode; the explicit `--split-version hybrid-v2` above records that choice. The cloud notebooks continue to use the original pinned bundle so that their execution source remains identical to the saved runs.
 
 ## Fixed protocol
 
@@ -45,7 +45,7 @@ The second command performs preflight only. Add `--execute` to launch training. 
 
 The fixed hybrid-v2 assignment separates known author leaf-ID and exact-hash components. Six exact duplicate images are excluded from the original collection. Validation selects checkpoints, pruning ratios, and INT8 candidates. Test results are not used by those selection routines.
 
-The repository entrypoint `stage_plantvillage.py` is a filename-only rename of `stage_hybrid_v2.py` in the frozen cloud bundle. Its implementation is unchanged. Cloud notebooks intentionally use the old name inside that verified bundle; direct repository commands use the new name.
+The repository entrypoint is `stage_plantvillage.py` and its default manifest directory is `splits/`. The frozen cloud bundle retains `stage_hybrid_v2.py` and `splits_hybrid_v2/`; cloud notebooks intentionally use those original internal paths. Image assignments, hash validation and training settings are unchanged.
 
 ## Results and figures
 
@@ -61,7 +61,7 @@ An `ineligible_accuracy_gate` outcome is a negative scientific result, not an el
 
 - `notebooks/`: cloud reproduction notebooks and modular stage references.
 - `src/rq71/` and root Python scripts: reusable training, compression, evaluation and plotting support.
-- `configs/`, `splits_hybrid_v2/`, `tests/`: configuration, final manifests and regression checks; `splits/` retains the earlier protocol.
+- `configs/`, `splits/`, `tests/`: configuration, final reviewed manifests and regression checks.
 - `results/`, `figures/`: small curated scientific outputs; datasets and model weights are external.
 
 Read [ENVIRONMENT.md](ENVIRONMENT.md) for dependency guidance. Preserve the compatible runtime PyTorch/torchvision pair and record the actual hardware, package versions and source fingerprints. Useful static and regression checks are:
@@ -69,6 +69,7 @@ Read [ENVIRONMENT.md](ENVIRONMENT.md) for dependency guidance. Preserve the comp
 ```bash
 python check_release.py
 python test_hybrid_integration.py
+python test_final_split_defaults.py
 python -m unittest discover -s tests -p 'test_*.py'
 ```
 

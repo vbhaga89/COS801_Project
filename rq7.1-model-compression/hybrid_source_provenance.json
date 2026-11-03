@@ -52,7 +52,14 @@
   ],
   "snapshot_note": "Hashes describe the original cloud execution source, not every current repository document.",
   "repository_renames": {
-    "stage_hybrid_v2.py": "stage_plantvillage.py"
+    "stage_hybrid_v2.py": "stage_plantvillage.py",
+    "splits_hybrid_v2/": "splits/"
   },
-  "repository_renames_note": "Original cloud snapshot hash keys are retained. The repository staging implementation is unchanged; the integration test import and active documentation use the new filename. Frozen cloud bundles and notebooks retain their original internal name."
+  "repository_renames_note": "Original cloud snapshot hash keys describe historical execution source and are retained. The repository uses stage_plantvillage.py and one canonical splits/ folder containing the final hybrid-v2 manifests. Staging and launcher defaults, test paths and documentation reflect that layout; legacy execution mode is rejected. Frozen cloud bundles and notebooks retain their original internal paths. Image assignments and training budgets are unchanged.",
+  "repository_protocol": {
+    "manifest_directory": "splits",
+    "protocol": "hybrid-v2",
+    "legacy_mode_supported": false,
+    "scientific_manifest_bytes_unchanged": true
+  }
 }

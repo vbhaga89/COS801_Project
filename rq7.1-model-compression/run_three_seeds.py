@@ -21,11 +21,16 @@ def validate_config(config):
         raise ValueError('Batch-limited/smoke configuration cannot be an official run')
 
 
-def verify_data(root, manifests):
+def verify_data(root, manifests, split_version='legacy'):
     sys.path.insert(0, str(Path(__file__).parent / 'src'))
     from rq71.manifests import read_manifest
     protocol = json.loads((manifests / 'split_protocol.json').read_text())
-    expected = {'train': 38146, 'val': 5449, 'test': 10704}
+    if split_version == 'hybrid-v2':
+        from hybrid_protocol import validate, COUNTS
+        protocol, _ = validate(manifests)
+        expected = COUNTS
+    else:
+        expected = {'train': 38146, 'val': 5449, 'test': 10704}
     if protocol['counts'] != expected or protocol['classes'] != 38:
         raise ValueError('Official run requires the audited 54,299-image, 38-class split')
     seen = {}
@@ -55,18 +60,20 @@ def main():
     parser.add_argument('--output-root', type=Path, required=True)
     parser.add_argument('--seeds', type=int, nargs='+', default=list(SEEDS))
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--split-version', choices=['legacy', 'hybrid-v2'], default='legacy')
     args = parser.parse_args()
     if len(set(args.seeds)) != len(args.seeds) or any(s not in SEEDS for s in args.seeds):
         parser.error('Use distinct seeds from 14, 27, 42')
     config = json.loads(args.config.read_text())
     validate_config(config)
-    verify_data(args.data_dir.resolve(), args.manifest_dir.resolve())
+    protocol = verify_data(args.data_dir.resolve(), args.manifest_dir.resolve(), args.split_version)
     print(f'Full-data preflight passed. Scheduled seeds: {args.seeds}; training batch size: {BATCH_SIZE}', flush=True)
     if not args.execute:
         print('No training started. Add --execute to launch.', flush=True)
         return
     run = args.output_root / datetime.now(timezone.utc).strftime('run_%Y%m%dT%H%M%S_%fZ')
     run.mkdir(parents=True, exist_ok=False)
+    (run / 'split_protocol.json').write_text(json.dumps(protocol, indent=2), encoding='utf-8')
     env = dict(os.environ, PYTHONUNBUFFERED='1', CUBLAS_WORKSPACE_CONFIG=':4096:8')
     subprocess.run([sys.executable, '-u', str(Path(__file__).parent / 'check_environment.py'),
                     '--require-cuda', '--output', str((run / 'environment.json').resolve())],

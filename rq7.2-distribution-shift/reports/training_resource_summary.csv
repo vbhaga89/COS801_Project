@@ -1,0 +1,6 @@
+strategy,training_seconds,estimated_energy_kwh,completed_fit_calls,training_minutes,assumed_average_power_w,energy_basis
+Colour_Lighting,3189.5298309339996,0.08859805085927777,2,53.15883051556666,100.0,Illustrative 100 W whole-system assumption; replace before reporting
+Combined,7434.911686071002,0.20652532461308337,2,123.91519476785002,100.0,Illustrative 100 W whole-system assumption; replace before reporting
+Geometry,7650.914061887999,0.21252539060799996,2,127.51523436479998,100.0,Illustrative 100 W whole-system assumption; replace before reporting
+Noise_Blur,3057.323294774,0.08492564707705555,2,50.95538824623333,100.0,Illustrative 100 W whole-system assumption; replace before reporting
+None (Baseline),2935.003513199,0.08152787536663889,2,48.91672521998333,100.0,Illustrative 100 W whole-system assumption; replace before reporting

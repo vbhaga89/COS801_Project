@@ -1,0 +1,41 @@
+{
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "packages": {
+    "tensorflow": "2.20.0",
+    "keras": "3.15.1",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.0",
+    "matplotlib": "3.11.1",
+    "pillow": "12.3.0",
+    "nbformat": "5.11.1",
+    "nbconvert": "7.17.2",
+    "ipykernel": "7.3.0"
+  },
+  "tensorflow_build": {
+    "cpu_compiler": "clang 18",
+    "cuda_compute_capabilities": [
+      "sm_60",
+      "sm_70",
+      "sm_80",
+      "sm_89",
+      "compute_90"
+    ],
+    "cuda_version": "12.5.1",
+    "cudnn_version": "9",
+    "is_cuda_build": true,
+    "is_rocm_build": false,
+    "is_tensorrt_build": false
+  },
+  "gpu_devices": [
+    "PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')"
+  ],
+  "nvidia_smi": "Wed Nov  4 15:43:26 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 580.76.04              Driver Version: 580.97         CUDA Version: 13.0     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA GeForce RTX 4060 ...    On  |   00000000:01:00.0 Off |                  N/A |\n| N/A   51C    P8              1W /   35W |    1131MiB /   8188MiB |      0%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|    0   N/A  N/A            1070      C   /python3.12                           N/A      |\n+-----------------------------------------------------------------------------------------+",
+  "analysis_seed": 42,
+  "training_seed_from_source": 42,
+  "split_status": "reconstructed_UNVERIFIED_exploratory",
+  "source_notebook": "RQ7_2_EfficientNetB0_Full_Augmentation_Experiments(8).ipynb",
+  "historical_hardware_from_source_logs": "NVIDIA GeForce RTX 4060 Laptop GPU; other details require confirmation",
+  "note": "Current analysis environment is not proof of historical training environment."
+}

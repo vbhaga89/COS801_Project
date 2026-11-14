@@ -1,0 +1,49 @@
+{
+  "PlantVillage": {
+    "local_root": "/mnt/d/M IT/PlantVillage/raw/color",
+    "images": 54305,
+    "classes": 38,
+    "role": "source-domain laboratory training/validation/test",
+    "download_URL": "TODO: exact source",
+    "version_or_download_date": "TODO",
+    "licence": "UNVERIFIED: inspect exact dataset distribution",
+    "licence_evidence_URL": "TODO",
+    "annotator_demographics": "unknown unless source documents this",
+    "limitations": [
+      "Controlled backgrounds differ from deployment images",
+      "Leaf/plant/session identifiers not available in supplied folders"
+    ]
+  },
+  "PlantDoc": {
+    "local_root": "/mnt/d/M IT/PlantDoc/train",
+    "images": 2922,
+    "classes": 28,
+    "role": "external field evaluation only; local folder named train",
+    "download_URL": "TODO: exact source",
+    "version_or_download_date": "TODO",
+    "licence": "UNVERIFIED: inspect exact dataset distribution",
+    "licence_evidence_URL": "TODO",
+    "annotator_demographics": "unknown unless source documents this",
+    "annotation_assumption": "One class per image from folder label; mapping is a semantic assumption requiring source review",
+    "limitations": [
+      "Folder labels do not localise every leaf or lesion",
+      "Web/field image provenance and annotation quality require review",
+      "No confirmed site/device/plant metadata in supplied index"
+    ]
+  },
+  "model_use": {
+    "intended": "Research comparison of laboratory-to-field robustness",
+    "restrictions": [
+      "Not validated for autonomous disease diagnosis or pesticide recommendations",
+      "Not a substitute for qualified agronomic assessment",
+      "Do not claim reliable unseen-crop or non-plant abstention from RQ7.2 analyses"
+    ],
+    "human_subjects": "No intentional human-subject study; review incidental people/identifying content and applicable institutional requirements"
+  },
+  "governance": {
+    "licence_review_completed": false,
+    "mapping_review_completed": false,
+    "near_duplicate_candidates_visually_reviewed": false,
+    "original_split_status": "reconstructed_UNVERIFIED_exploratory"
+  }
+}

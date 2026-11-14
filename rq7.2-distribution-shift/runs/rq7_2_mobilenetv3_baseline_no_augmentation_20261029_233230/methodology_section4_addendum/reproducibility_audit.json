@@ -1,0 +1,30 @@
+{
+  "seed_used": 42,
+  "dataset_root": "/mnt/d/M IT/PlantVillage/raw/color",
+  "field_dataset_root": "/mnt/d/M IT/PlantDoc/test",
+  "partition_sizes": {
+    "train": 38011,
+    "validation": 8146,
+    "test": 8148
+  },
+  "exact_hash_overlap": {
+    "train_vs_validation": 0,
+    "train_vs_test": 0,
+    "validation_vs_test": 0
+  },
+  "tensorflow": "2.20.0",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "gpu_devices": [
+    "PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')"
+  ],
+  "model_architecture": "rq7_2_baseline_mobilenetv3small",
+  "class_count": 38,
+  "field_images": 128,
+  "mapped_field_classes": 13,
+  "near_duplicate_audit": "NOT COMPLETED",
+  "source_session_grouping": "NOT VERIFIED",
+  "three_independent_seed_runs": "NOT COMPLETED",
+  "training_wall_time": "NOT CAPTURED BY ORIGINAL RUN",
+  "energy_or_monetary_cost": "NOT MEASURED"
+}

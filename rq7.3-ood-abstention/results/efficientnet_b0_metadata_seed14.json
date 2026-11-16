@@ -1,0 +1,16 @@
+{
+  "model": "efficientnet_b0",
+  "seed": 14,
+  "num_classes": 30,
+  "batch_size": 64,
+  "learning_rate": 0.0001,
+  "optimizer": "Adam",
+  "max_epochs": 12,
+  "patience": 3,
+  "training_time_seconds": 5080.123161077499,
+  "test_loss": 0.02174376566408715,
+  "test_accuracy": 0.9939949776176439,
+  "test_macro_f1": 0.9921884709714892,
+  "checkpoint": "models/efficientnet_b0_seed14.pt",
+  "history": "results/efficientnet_b0_history_seed14.csv"
+}

@@ -5,6 +5,7 @@ import csv
 import hashlib
 import json
 from pathlib import Path
+from .table_io import materialize_csv
 
 SUFFIXES = {'.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff', '.webp'}
 
@@ -64,6 +65,7 @@ def prepare_manifests(data_dir, manifest_dir):
 
 def read_manifest(data_dir, manifest_dir, split):
     root, folder = Path(data_dir).resolve(), Path(manifest_dir)
+    materialize_csv(folder / f'{split}.csv')
     protocol = json.loads((folder / 'split_protocol.json').read_text(encoding='utf-8'))
     for name in ('class_to_idx.json', f'{split}.csv'):
         if hashlib.sha256((folder / name).read_bytes()).hexdigest() != protocol['files_sha256'][name]:

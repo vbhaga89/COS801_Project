@@ -4,5 +4,12 @@ artifacts/*
 !artifacts/README.md
 results/run_*/
 results/staged_*/
-!splits/*.csv
-!figures/*.pdf
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
+*.gif
+*.webp
+reproduced_summary/

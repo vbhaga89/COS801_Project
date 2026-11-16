@@ -3,12 +3,15 @@ import csv
 import hashlib
 import json
 from pathlib import Path, PurePosixPath
+from src.rq71.table_io import materialize_csv
 
 PROTOCOL_SHA = '603566dd5124ce5cb7ddefd88bbb12cdd1c343843e212d40b6cedf39df11aacd'
 ASSIGNMENTS_SHA = '28c7093e1465563240231a6bf911b496be14f13e79d29f455cfea8a0b29a2d74'
 COUNTS = {'train': 38147, 'val': 5448, 'test': 10704}
 
 def digest(path):
+    if Path(path).suffix == '.csv':
+        materialize_csv(path)
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 def safe_relative(value):

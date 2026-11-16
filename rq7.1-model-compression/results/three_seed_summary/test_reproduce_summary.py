@@ -49,6 +49,11 @@ class SummaryTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             generate(self.root, self.root / 'summary')
 
+    def test_reject_comparison_change(self):
+        self.change_json(14, 'final_comparison.json', lambda d: d['rows'][0].__setitem__(0, 'changed'))
+        with self.assertRaisesRegex(AssertionError, 'fingerprint'):
+            generate(self.root, self.root / 'summary')
+
     def test_reject_split_change(self):
         self.change_json(42, 'split_protocol.json', lambda d: d['files_sha256'].update({'train.csv': 'wrong'}))
         with self.assertRaises(AssertionError):

@@ -15,13 +15,13 @@ RQ7.1 compares INT8 quantisation, structured pruning and knowledge distillation 
 
 ## Files
 
-`final_comparison.csv`, `full_run_manifest.json`, `config_seed42.json`, `split_protocol.json`, `environment.json` and `source_provenance.json` are unchanged original output files. `test_results.csv` selects report columns from the original CSV without changing numeric values. `evaluation_metrics.json` is a compact extract of the nine original evaluation files, preserving validation temperature selection, calibration, per-class/per-crop metrics, ID selective risk and source SHA256 fingerprints. Prediction arrays and risk-curve point arrays remain in Kaggle. This is not a complete checkpoint or output backup.
+`final_comparison.json` is a lossless table representation of the original comparison CSV, with its original SHA256 and serialization metadata. Original manifests, configurations, environments and source-provenance JSONs are unchanged. Generated CSVs remain external; the summary script regenerates report tables locally. `evaluation_metrics.json` is a compact extract of the nine original evaluation files, preserving validation temperature selection, calibration, per-class/per-crop metrics, ID selective risk and source SHA256 fingerprints. Prediction arrays and risk-curve point arrays remain in Kaggle. This is not a complete checkpoint or output backup.
 
 ## Outcomes
 
 Both FP32 baselines, all pruning candidates, both CE/KD comparisons, EfficientNet INT8 and reporting completed. The scientific manifest is `partial` solely because MobileNet INT8 failed its validation accuracy gate. No MobileNet INT8 test score was produced or imputed. The selected pruning ratios and all valid metrics remain in the original table. Smaller files and budget eligibility do not establish latency speedup.
 
-The [three-seed summary](../three_seed_summary/) verifies matching scientific settings, split hashes, source fingerprints and recorded environments before combining seeds 14, 27 and 42. It reports means and sample SD, calibration and supported worst-group results. [Original figures](../../figures/RQ7_1_Model_Compression_Seed42/) retain their single-seed meaning.
+The [three-seed summary](../three_seed_summary/) verifies matching scientific settings, split hashes, source fingerprints and recorded environments before combining seeds 14, 27 and 42. It reports means and sample SD, calibration and supported worst-group results. [External figure references](../../figures/RQ7_1_Model_Compression_Seed42/) retain their single-seed meaning.
 
 ## Reproduction and limitations
 

@@ -2,6 +2,7 @@
 import argparse
 import csv
 import hashlib
+import io
 import json
 import math
 from pathlib import Path
@@ -41,7 +42,12 @@ def generate(results_root, output):
         signature = ({k: v for k, v in config.items() if k not in IGNORED_CONFIG}, protocol['files_sha256'], provenance['bundle_sha256'], provenance['inventory']['files_sha256'], environment)
         signatures.append(signature)
         evidence.append(dict(seed=seed, config_hash=manifest['config_hash'], scientific_status=manifest['status'], incomplete_stages=manifest['incomplete_stages'], source_bundle_sha256=provenance['bundle_sha256'], input_sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in directory.iterdir() if p.suffix in ('.csv', '.json')}))
-        rows = list(csv.DictReader((directory / 'final_comparison.csv').read_text(encoding='utf-8').splitlines()))
+        table = read_json(directory / 'final_comparison.json')
+        stream = io.StringIO(newline='')
+        csv.writer(stream, lineterminator=table['lineterminator']).writerows(
+            [table['columns'], *table['rows']])
+        assert hashlib.sha256(stream.getvalue().encode('utf-8')).hexdigest() == table['csv_sha256'], 'Comparison table fingerprint mismatch'
+        rows = [dict(zip(table['columns'], row)) for row in table['rows']]
         assert len(rows) == 9
         keys = []
         for row in rows:

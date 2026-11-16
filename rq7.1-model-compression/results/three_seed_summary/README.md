@@ -16,6 +16,8 @@ Seeds **14, 27, 42**. Each value is mean ± sample standard deviation across thr
 
 MobileNet INT8 failed the validation gate for all three seeds. Its test score is unavailable, not zero. MobileNet pruning selected 20%, 20%, 10% for seeds 14, 27, 42; EfficientNet selected 20% in all three. The table compares the validation-selected procedures.
 
+The CSV filenames below are generated outputs, not committed files. Run the reproduction command to create them locally from the versioned JSON evidence.
+
 ## Reproduction
 
 From the RQ7.1 project directory:
@@ -24,7 +26,7 @@ From the RQ7.1 project directory:
 python results/three_seed_summary/reproduce_summary.py --results-root results --output reproduced_summary
 ```
 
-The script verifies source-file and bundle fingerprints, scientific configuration, fixed split hashes, recorded environments, row identities and validation-only temperature selection. It reads the original comparison files and compact extracts in the adjacent seed directories. No training, image access or cloud credentials are required.
+The script verifies source-file and bundle fingerprints, scientific configuration, fixed split hashes, recorded environments, row identities and validation-only temperature selection. It reads the lossless JSON comparison tables and compact extracts in the adjacent seed directories. No training, image access or cloud credentials are required.
 
 ## Calibration and worst groups
 

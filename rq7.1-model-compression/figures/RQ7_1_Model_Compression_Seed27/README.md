@@ -1,5 +1,7 @@
 # RQ7_1_Model_Compression_Seed27 — figures
 
+Generated images are stored in the linked Kaggle output, not in Git. The filenames below describe external artifacts. Existing SHA256 JSON records refer to those external originals.
+
 Original PNG files from Kaggle script version `365106458`, run `run_20261103T034436_275661Z/seed_27`. These images were not regenerated or edited.
 
 | Figure | Content |
@@ -12,7 +14,7 @@ Original PNG files from Kaggle script version `365106458`, run `run_20261103T034
 | `training_student_ce.png` | CE training histories for control and distilled students |
 | `training_kd_objective.png` | Knowledge-distillation objective histories |
 
-The 18 files named `<analysis_id>__reliability.png` and `<analysis_id>__risk_coverage.png` contain calibration and selective-risk diagrams for the nine evaluated artifacts. 
+The 18 files named `<analysis_id>__reliability.png` and `<analysis_id>__risk_coverage.png` contain calibration and selective-risk diagrams for the nine evaluated artifacts.
 
 This directory contains 25 verified original PNG files. It curates the combined training panels and all calibration/risk–coverage plots; Kaggle retains the additional 14 individual training plots. These are single-seed results, not multi-seed averages. `sha256.json` records the downloaded figure fingerprints.
 

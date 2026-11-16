@@ -1,5 +1,7 @@
 # RQ7_1_Model_Compression_Seed14 — figures
 
+Generated images are stored in the linked Kaggle output, not in Git. The filenames below describe external artifacts. Existing SHA256 JSON records refer to those external originals.
+
 Original PNG files from Kaggle script version `364832930`, run `run_20261102T114435_495303Z/seed_14`. These images were not regenerated or edited.
 
 | Figure | Content |

@@ -51,14 +51,15 @@ The repository and final seed notebooks both use `stage_plantvillage.py` and `sp
 | 27 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed27/) | [Figures](figures/RQ7_1_Model_Compression_Seed27/) | Execution completed; MobileNet INT8 rejected |
 | 42 | [Tables and manifest](results/RQ7_1_Model_Compression_Seed42/) | [Figures](figures/RQ7_1_Model_Compression_Seed42/) | Execution completed; MobileNet INT8 rejected |
 
-An `ineligible_accuracy_gate` outcome is a negative scientific result, not an eligible test score. The manifest can therefore be `partial` even when the notebook execution succeeds. Full models, histories and diagnostics remain in the saved Kaggle output. Curated figure folders include training histories, compression comparisons, reliability diagrams and in-distribution risk–coverage curves.
+An `ineligible_accuracy_gate` outcome is a negative scientific result, not an eligible test score. The manifest can therefore be `partial` even when the notebook execution succeeds. Full models, histories, diagnostics and generated figures remain in the saved Kaggle output. Figure folders document the external outputs; generated image binaries and CSV tables are not tracked.
 
 ## Repository layout
 
 - `notebooks/`: cloud reproduction notebooks and modular stage references.
 - `src/rq71/` and root Python scripts: reusable training, compression, evaluation and plotting support.
 - `configs/`, `splits/`, `tests/`: configuration, final reviewed manifests and regression checks.
-- `results/`, `figures/`: small curated scientific outputs; datasets and model weights are external.
+- `results/`: JSON evidence, summary documentation and table-reproduction code.
+- `figures/`: external-output references; generated plots, datasets and model weights are not tracked.
 
 Read [ENVIRONMENT.md](ENVIRONMENT.md) for dependency guidance. Preserve the compatible runtime PyTorch/torchvision pair and record the actual hardware, package versions and source fingerprints. Useful static and regression checks are:
 
@@ -87,7 +88,9 @@ python results/three_seed_summary/reproduce_summary.py --results-root results --
 python -m unittest discover -s results/three_seed_summary -p 'test_*.py'
 ```
 
-These commands use the committed original comparison CSVs, saved configurations/provenance and compact evaluation extracts. They require only Python's standard library, with no images, model weights, cloud credentials or retraining. Five regression tests verify the summary and rejection of mismatched settings, splits, environments and duplicate evaluations.
+These commands use lossless JSON representations of the original comparison tables, saved configurations/provenance and compact evaluation extracts. Generated CSVs are written locally and ignored by Git. They require only Python's standard library, with no images, model weights, cloud credentials or retraining. Five regression tests verify the summary and rejection of mismatched settings, splits, environments and duplicate evaluations.
+
+Reviewed split inputs are stored as JSON tables in `splits/`. Staging and manifest loading reconstruct the runtime CSVs automatically and verify their original SHA256 fingerprints. This changes storage format only: assignments, image counts and the scientific protocol are unchanged. Generated CSVs and images remain available in the saved Kaggle versions and are excluded by the scoped `.gitignore`.
 
 ## Data provenance, licensing and intended use
 

@@ -25,6 +25,6 @@ The [three-seed summary](../three_seed_summary/) verifies matching scientific se
 
 ## Reproduction and limitations
 
-The [cloud notebook](../../notebooks/RQ7_1_Model_Compression_Seed14.ipynb) is an output-free cleaned reproduction entrypoint, not the executed notebook. It checks out pinned source commit `c9849c4`, validates the final manifests and stages the configured image archive. Private-repository read access uses the GITHUB_TOKEN secret; training requires RUN_FULL=True. The historical bundle remains unchanged; historical paths in saved records must not be rewritten.
+The [cloud notebook](../../notebooks/RQ7_1_Model_Compression_Seed14.ipynb) is an output-free cleaned reproduction entrypoint, not the executed notebook. It checks out pinned source commit `bc89591`, validates the final manifests and stages the configured image archive. Private-repository read access uses the GITHUB_TOKEN secret; training requires RUN_FULL=True. The historical bundle remains unchanged; historical paths in saved records must not be rewritten.
 
 Three seeds share one fixed split. Unknown leaf identities and unscreened near duplicates remain limitations. Historical test feedback preceded protocol revision; legacy-split results are not equivalent repetitions. Hosted CPU latency is not target-device validation. Dataset images, model weights and complete archives remain external.

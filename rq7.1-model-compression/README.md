@@ -10,7 +10,7 @@ Use the sectioned cloud notebooks, one seed per run:
 - [Seed 27](notebooks/RQ7_1_Model_Compression_Seed27.ipynb)
 - [Seed 42](notebooks/RQ7_1_Model_Compression_Seed42.ipynb)
 
-These notebooks support Kaggle and Colab and check out repository commit `c9849c4fed12dd15e05801c860ae37af078e60a4`. They use `stage_plantvillage.py` and the single final `splits/` directory. No source ZIP is required. Attach the audited image archive at the configured path, enable Internet and provide a read-access `GITHUB_TOKEN` secret for this private repository. Kaggle saved background runs require the secret to be attached in advance; Colab can use its secret store or a hidden interactive prompt. Never put tokens in code or outputs.
+These notebooks support Kaggle and Colab and check out repository commit `bc895910e762388ceceeb108d4365f567b430c15`. They use `stage_plantvillage.py` and the single final `splits/` directory. No source ZIP is required. Attach the audited image archive at the configured path, enable Internet and provide a read-access `GITHUB_TOKEN` secret for this private repository. Kaggle saved background runs require the secret to be attached in advance; Colab can use its secret store or a hidden interactive prompt. Never put tokens in code or outputs.
 
 Review `RUN_FULL` before running all sections; training is disabled by default. Source-commit verification, fixed-manifest checks, GPU/environment checks, image staging and full-data preflight precede training. Every execution creates a timestamped output directory; backups do not implement checkpoint resume. The numbered modular notebooks remain stage references.
 
@@ -88,7 +88,7 @@ python results/three_seed_summary/reproduce_summary.py --results-root results --
 python -m unittest discover -s results/three_seed_summary -p 'test_*.py'
 ```
 
-These commands use lossless JSON representations of the original comparison tables, saved configurations/provenance and compact evaluation extracts. Generated CSVs are written locally and ignored by Git. They require only Python's standard library, with no images, model weights, cloud credentials or retraining. Five regression tests verify the summary and rejection of mismatched settings, splits, environments and duplicate evaluations.
+These commands use lossless JSON representations of the original comparison tables, saved configurations/provenance and compact evaluation extracts. Generated CSVs are written locally and ignored by Git. They require only Python's standard library, with no images, model weights, cloud credentials or retraining. Six regression tests verify the summary and rejection of mismatched settings, splits, environments and duplicate evaluations.
 
 Reviewed split inputs are stored as JSON tables in `splits/`. Staging and manifest loading reconstruct the runtime CSVs automatically and verify their original SHA256 fingerprints. This changes storage format only: assignments, image counts and the scientific protocol are unchanged. Generated CSVs and images remain available in the saved Kaggle versions and are excluded by the scoped `.gitignore`.
 

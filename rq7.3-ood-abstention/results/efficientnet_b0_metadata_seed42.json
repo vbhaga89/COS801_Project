@@ -7,8 +7,10 @@
   "optimizer": "Adam",
   "max_epochs": 12,
   "patience": 3,
-  "training_time_seconds": 5099.690213680267,
-  "test_loss": 0.013878828313611058,
-  "test_accuracy": 0.9956327109946501,
-  "test_macro_f1": 0.994746472161063
+  "training_time_seconds": 5663.879058122635,
+  "test_loss": 0.013726968820948614,
+  "test_accuracy": 0.9955235287695163,
+  "test_macro_f1": 0.994129808059921,
+  "checkpoint": "models/efficientnet_b0_seed42.pt",
+  "history": "results/efficientnet_b0_history_seed42.csv"
 }

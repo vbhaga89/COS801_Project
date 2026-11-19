@@ -55,3 +55,9 @@ rq7.1-model-compression/artifacts/*
 .DS_Store
 Thumbs.db
 .vscode/settings.json
+
+# =========================
+# Folders
+# =========================
+
+/rq7.3-ood-abstention/data/nonplant

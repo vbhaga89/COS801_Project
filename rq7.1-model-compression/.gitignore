@@ -1,0 +1,15 @@
+__pycache__/
+.ipynb_checkpoints/
+artifacts/*
+!artifacts/README.md
+results/run_*/
+results/staged_*/
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
+*.gif
+*.webp
+reproduced_summary/

@@ -1,0 +1,35 @@
+{
+  "strategy": "hybrid_v2_author_leaf_and_exact_duplicate_components",
+  "protocol_version": 2,
+  "split_seed": 16153790,
+  "requested_validation_fraction_of_official_training": 0.125,
+  "counts": {
+    "train": 38147,
+    "val": 5448,
+    "test": 10704
+  },
+  "classes": 38,
+  "leaf_group_status": "partial_metadata_hybrid_not_fully_leaf_disjoint",
+  "unresolved_policy": "Unresolved exact-hash components allocated at image/component level within class; may occur in train or validation, never claimed independent leaves.",
+  "test_policy": "Original audited test CSV and membership fixed byte-for-byte",
+  "files_sha256": {
+    "train.csv": "8e8af5971a1162ceddae8eb0929276cbc32ef3a91eee7987bb47585f3cbc90ae",
+    "val.csv": "1aad602b9335112c8c5263a750d12f1946b1d9ccd4f54f059b474a863148e6a6",
+    "test.csv": "c583faae834f50cd10eb51ac6fdcc37bba966d564819ad817fc4b40faf0d00d0",
+    "class_to_idx.json": "64aba7e3f9943747b4270074c2689332a7e87e04dba0675ecc3848e59b2da84f"
+  },
+  "original_manifest_sha256": {
+    "class_to_idx.json": "64aba7e3f9943747b4270074c2689332a7e87e04dba0675ecc3848e59b2da84f",
+    "split_protocol.json": "c1dc55e7ce82648bca0e6cae09d9a3494d88b793464f576b62e261a6a632c7fc",
+    "test.csv": "c583faae834f50cd10eb51ac6fdcc37bba966d564819ad817fc4b40faf0d00d0",
+    "train.csv": "3c5d1b28d4683bdec475361f5cc1a2ef9ddf43166e8801e80245ad06e5b873b1",
+    "val.csv": "a7d97d4819896130aadac9b41e71606ec7b31408edc3e1a49a1354030e469a00"
+  },
+  "author_metadata_sha256": "3b4b253683c6911744959a3870a92509b1faa1ee34e9f8585e21d0fe6337a25b",
+  "author_group_matching": "Conservative unique class-compatible match from recorded audit; ambiguous or alternate-label matches remain unresolved",
+  "limitations": [
+    "Unknown physical leaves may still overlap. Unresolved components receive image-level assignment; not verified leaf IDs.",
+    "No perceptual near-duplicate screening performed yet. Candidate is not certified fully leaf-disjoint.",
+    "Existing test metrics were inspected before protocol revision; no test metric used in assignment."
+  ]
+}

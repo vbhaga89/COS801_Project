@@ -1,2 +1,0 @@
-Model,Augmentation,Lab Accuracy (%),Field Accuracy (%),Accuracy Drop (pp),Lab Macro-F1 (%),Field Macro-F1 (%),Macro-F1 Drop (pp)
-EfficientNetB0,None (Baseline),99.4,21.46,77.94,99.2,15.66,83.54

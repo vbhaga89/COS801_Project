@@ -1,9 +1,0 @@
-{
-  "training_hours": null,
-  "average_system_power_W": null,
-  "energy_kWh": null,
-  "electricity_cost": null,
-  "cloud_cost": null,
-  "currency": "specify when entering prices",
-  "status": "incomplete unless supported values supplied"
-}

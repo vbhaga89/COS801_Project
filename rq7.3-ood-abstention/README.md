@@ -1,181 +1,170 @@
-# RQ 7.3 - Abstention on Out-of-Distribution Inputs
+# RQ7.3 — OOD Detection and Abstention
 
-This directory contains the complete workflow for evaluating whether image
-classification models can identify inputs that are outside their training
-distribution and abstain from making unreliable predictions.
+## Overview
 
-The experiment uses PlantVillage crop images for in-distribution (ID)
-classification and evaluates distribution shift using:
+RQ7.3 evaluates whether MobileNetV3-Small and EfficientNet-B0 can detect
+inputs outside their 30-class PlantVillage training distribution and abstain.
+The experiment uses seeds 14, 27, and 42 and compares:
 
-- **Grape** images as a held-out crop-species OOD set.
-- **Corn** images as a second held-out crop-species OOD set.
-- **Non-plant** images sampled from selected Caltech-101 categories.
+- crop OOD: grape images and corn images excluded from ID training;
+- non-plant OOD: selected Caltech-101 categories;
+- closed-set ID: the remaining 30 PlantVillage classes;
+- post-hoc scores: Maximum Softmax Probability, entropy, prediction margin,
+  and energy.
 
-The ID task contains 30 classes. Grape and corn are excluded from all ID
-training, validation, and test splits. The experiments are repeated with seeds
-`14`, `27`, and `42`.
+The workflow includes OOD AUROC, FPR@95% TPR, calibration/ECE, and
+risk-coverage/AURC.
 
-## Workflow
+## Data
 
-Run the notebooks in numerical order:
+### In-distribution PlantVillage data
 
-1. `01_dataset_setup.ipynb`
-2. `02_train_baselines.ipynb`
-3. `03_closed_set_ood.ipynb`
-4. `04_posthoc_methods.ipynb`
-5. `05_final_evaluation.ipynb`
+- Download: [PlantVillage Dataset](https://github.com/spMohanty/PlantVillage-Dataset)
+- Kaggle mirror: [PlantVillage Dataset](https://www.kaggle.com/datasets/emmarex/plantdisease)
+- The repository copy is under `data/` and is organised in class folders.
+- `data/color_train.txt` and `data/color_test.txt` preserve the official
+  membership. Grape and corn species are removed from all ID splits.
 
-The notebooks use paths relative to this directory. Open or run them with
-`rq7.3-ood-abstention` as the working directory.
+### Crop OOD data
 
-## Notebook descriptions
+Grape and corn images remain in the PlantVillage download but are excluded
+from ID training, validation, and testing. The experiment writes them to
+`ood_grape.csv` and `ood_corn.csv`.
 
-### 1. Dataset setup
+### Non-plant OOD data
 
-[`01_dataset_setup.ipynb`](./01_dataset_setup.ipynb) prepares and validates the
-data used by all later notebooks. It:
+- Download/source: [Caltech-101](https://www.kaggle.com/datasets/imbikramsaha/caltech-101)
+- The notebook uses 100 images from each of `airplanes`, `Motorbikes`,
+  `Faces`, `Leopards`, `watch`, and `chandelier`.
+- A prepared copy is stored locally under
+  `data/nonplant/caltech101/101_ObjectCategories/`.
+- Re-download or verify the source archive if that directory is moved or
+  deleted.
 
-- Scans the PlantVillage class folders in `data/`.
-- Builds a dataframe containing image paths, class names, and crop species.
-- Reads the supplied `color_train.txt` and `color_test.txt` metadata.
-- Preserves the official train/test assignment instead of randomly splitting
-  individual images.
-- Removes Grape and corn from the ID data.
-- Creates a stratified 90/10 ID train/validation split.
-- Downloads Caltech-101 when necessary and samples 100 images from each of the
-  selected non-plant categories:
-  `airplanes`, `Motorbikes`, `Faces`, `Leopards`, `watch`, and `chandelier`.
-- Runs integrity checks for class coverage, OOD exclusion, and overlap between
-  ID splits.
+Before reuse, verify PlantVillage and Caltech-101 licences and redistribution
+terms; do not commit new datasets or archives unless redistribution is allowed.
 
-The generated manifests and label mappings are saved in `splits/`.
+## Notebooks
 
-### 2. Train baseline models
+Run from this directory in numerical order:
 
-[`02_train_baselines.ipynb`](./02_train_baselines.ipynb) trains the two baseline
-classifiers on the ID training set:
+| Notebook | Purpose |
+|---|---|
+| [01_dataset_setup.ipynb](01_dataset_setup.ipynb) | Scan PlantVillage, build ID/OOD manifests, prepare Caltech-101 non-plant samples, and validate exclusions |
+| [02_train_baselines.ipynb](02_train_baselines.ipynb) | Train both 30-class baselines for seeds 14, 27, 42 and save checkpoints/history |
+| [03_closed_set_ood.ipynb](03_closed_set_ood.ipynb) | Load models, evaluate ID/crop/non-plant sets, and cache logits for reuse |
+| [04_posthoc_methods.ipynb](04_posthoc_methods.ipynb) | Compute MSP, entropy, margin, and energy OOD metrics and distributions |
+| [05_final_evaluation.ipynb](05_final_evaluation.ipynb) | Generate calibration and crop/non-plant risk-coverage/AURC results |
 
-- MobileNetV3-Small
-- EfficientNet-B0
-
-For each model and seed, it:
-
-- Applies the dataset transforms and loads the ID manifests.
-- Trains using the training split and monitors validation performance.
-- Selects and saves the best checkpoint.
-- Evaluates the model on the ID test set.
-- Saves training history, metadata, summary metrics, and training curves.
-
-### 3. Closed-set and OOD confidence evaluation
-
-[`03_closed_set_ood.ipynb`](./03_closed_set_ood.ipynb) loads the trained
-checkpoints and evaluates both models on:
-
-- ID test images.
-- Grape OOD images.
-- Corn OOD images.
-- Non-plant OOD images.
-
-It recreates the model architectures, records logits and labels for every
-dataset, and calculates the initial closed-set/OOD confidence results. The
-logits are saved in `logits/` for reuse by notebooks 4 and 5, avoiding repeated
-model inference.
-
-### 4. Post-hoc uncertainty and abstention methods
-
-[`04_posthoc_methods.ipynb`](./04_posthoc_methods.ipynb) evaluates four
-post-hoc confidence scores from the saved logits:
-
-- Maximum Softmax Probability (MSP)
-- Entropy-based confidence
-- Prediction margin
-- Energy score
-
-For each model and seed, it computes OOD detection metrics including AUROC,
-ID-oriented AUPR, FPR at 95% TPR, and OOD rejection at 95% ID coverage.
-
-The notebook also contains a reusable plotting function followed by separate
-cells for seeds `14`, `27`, and `42`. Each seed produces:
-
-- Combined OOD AUROC bar charts.
-- Combined OOD FPR@95% TPR bar charts.
-- Energy-score distributions for ID, Grape OOD, Corn OOD, and Non-plant OOD.
-
-### 5. Final evaluation
-
-[`05_final_evaluation.ipynb`](./05_final_evaluation.ipynb) performs the final
-calibration and abstention analysis using the saved logits. It:
-
-- Calculates expected calibration error and reliability information.
-- Builds risk-coverage curves using ID classification errors and OOD inputs
-  treated as errors when accepted.
-- Calculates the area under each risk-coverage curve (AURC).
-
-As with notebook 4, it uses a reusable plotting function followed by separate
-cells for seeds `14`, `27`, and `42`. Each seed produces:
-
-- Reliability diagrams for both models.
-- Risk-coverage curves for crop OOD data.
-- Risk-coverage curves for non-plant OOD data.
-- The actual curves in the risk-coverage curve are MSP, entropy, margin, and energy scoring.
+Open or execute with `rq7.3-ood-abstention` as the working directory because
+all data, model, logits, split, and result paths are relative.
 
 ## Directory structure
 
 ```text
 rq7.3-ood-abstention/
+├── README.md
 ├── 01_dataset_setup.ipynb
 ├── 02_train_baselines.ipynb
 ├── 03_closed_set_ood.ipynb
 ├── 04_posthoc_methods.ipynb
 ├── 05_final_evaluation.ipynb
-├── README.md
 ├── data/
-│   ├── PlantVillage class folders
+│   ├── PlantVillage class folders/
 │   ├── color_train.txt
 │   ├── color_test.txt
-│   └── nonplant/                 # Downloaded Caltech-101 data
-├── splits/                       # CSV manifests and split configuration
-├── models/                       # Seed-specific model checkpoints
-├── logits/                       # Saved model logits and labels
+│   └── nonplant/caltech101/101_ObjectCategories/
+├── splits/
+│   ├── train_id.csv
+│   ├── val_id.csv
+│   ├── test_id.csv
+│   ├── ood_grape.csv
+│   ├── ood_corn.csv
+│   ├── ood_nonplant.csv
+│   ├── class_to_idx.json
+│   └── split_config.json
+├── models/
+│   └── <architecture>_seed<14|27|42>.pt
+├── logits/
+│   └── <architecture>_<dataset>_seed<seed>.pt
 └── results/
-    ├── figures/                  # PNG plots generated by notebooks 2, 4, and 5
-    ├── *.csv                     # Metrics, histories, and summaries
-    └── *.json                    # Training metadata and configurations
+    ├── *.csv
+    ├── *.json
+    └── figures/
 ```
 
-## Important generated files
+## Setup and run
 
-### Split manifests
+From the repository root:
 
-- `splits/train_id.csv`
-- `splits/val_id.csv`
-- `splits/test_id.csv`
-- `splits/ood_grape.csv`
-- `splits/ood_corn.csv`
-- `splits/ood_nonplant.csv`
-- `splits/class_to_idx.json`
-- `splits/split_config.json`
+```bash
+uv sync
+cd rq7.3-ood-abstention
+uv run jupyter notebook
+```
 
-### Model and inference artifacts
+The workflow requires PyTorch/torchvision, NumPy, pandas, Pillow, matplotlib,
+and scikit-learn. Verify the PyTorch/torchvision pair and GPU/CUDA support in
+`02_train_baselines.ipynb` before full training.
 
-Model checkpoints are stored as seed-specific `.pt` files in `models/`.
-Inference outputs are stored as seed-specific `.pt` files in `logits/`.
+Run all five notebooks in order. Re-running them may overwrite split, model,
+logit, CSV, JSON, and PNG files with the same seed and name.
 
-### Results and figures
+## Files and artifacts generated
 
-The `results/` directory contains baseline, closed-set, post-hoc, calibration,
-and AURC summaries. All plots are written to `results/figures/` and include the
-model name and seed in their filenames, for example:
+### Splits
+
+The setup notebook creates ID train/validation/test manifests and three OOD
+manifests plus the class mapping and split configuration.
+
+### Models
+
+`models/` contains one `.pt` checkpoint for each architecture and seed:
 
 ```text
-MobileNetV3-Small_energy_score_distributions_seed42.png
+efficientnet_b0_seed14.pt
+efficientnet_b0_seed27.pt
+efficientnet_b0_seed42.pt
+mobilenet_v3_small_seed14.pt
+mobilenet_v3_small_seed27.pt
+mobilenet_v3_small_seed42.pt
+```
+
+### Logits
+
+`logits/` contains ID, grape, corn, and non-plant logits/labels for each
+architecture and seed. These files decouple post-hoc and final evaluation from
+model retraining.
+
+### Results
+
+`results/` contains baseline histories, metadata, closed-set/OOD summaries,
+post-hoc metrics, calibration metrics, AURC curves, and seed-combined CSV
+files. `results/figures/` contains training curves, OOD AUROC/FPR plots,
+energy distributions, reliability diagrams, and risk-coverage curves.
+
+Example filenames:
+
+```text
 EfficientNet-B0_reliability_diagram_seed27.png
+MobileNetV3-Small_combined_ood_auroc_seed42.png
 MobileNetV3-Small_risk_coverage_Nonplant_seed14.png
 ```
 
-## Reproducibility
+## Reproducibility and interpretation
 
-The notebooks use fixed random seeds where sampling or training is involved.
-The primary experiment seeds are `14`, `27`, and `42`. Re-running a notebook
-may overwrite files with the same names in `splits/`, `models/`, `logits/`, or
-`results/`.
+- Training seeds are 14, 27, and 42.
+- Grape and corn are held out by crop species, not randomly sampled from ID.
+- Reuse the saved logits for notebook 4 and 5 to avoid different inference
+  behaviour from repeated model loading.
+- Summaries should report mean and sample SD across matched seeds.
+- `AURC` depends on treating OOD inputs as accepted errors for ID-vs-OOD
+  risk-coverage curves; state this convention in reports.
+- Checkpoint, figure, and metric file names include the architecture and seed
+  where appropriate.
+- Record PyTorch, torchvision, CUDA, and hardware versions for each run.
+
+Limitations include ID/OOD domain similarity, the small selected non-plant
+category set, calibration on the available ID test set, and no deployment
+hardware validation. AUROC and abstention metrics demonstrate experimental
+behaviour, not suitability for field use.
